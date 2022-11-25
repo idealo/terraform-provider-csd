@@ -1,0 +1,111 @@
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+builds:
+  - env:
+      # goreleaser does not work with CGO, it could also complicate
+      # usage by users in CI/CD systems like Terraform Cloud where
+      # they are unable to install libraries.
+      - CGO_ENABLED=0
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
+    goos:
+      - windows
+      - linux
+      - darwin
+    goarch:
+      - '386'
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: 'arm64'
+      - goos: darwin
+        goarch: '386'
+    binary: '{{ .ProjectName }}_v{{ .Version }}'
+archives:
+  - format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+    files:
+      - README.md
+checksum:
+  extra_files:
+    - glob: 'terraform-registry-manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
+  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  algorithm: sha256
+signs:
+  - artifacts: checksum
+    args:
+      # if you are using this in a GitHub action or some other automated pipeline, you
+      # need to pass the batch flag to indicate it's not interactive.
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_FINGERPRINT }}" # set this environment variable for your signing key
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+release:
+  extra_files:
+    - glob: 'terraform-registry-manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
+  # If you want to manually examine the release before its live, uncomment this line:
+  # draft: true
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  skip: true
+gomod:
+  # Proxy a module from proxy.golang.org, making the builds verifiable.
+  # This will only be effective if running against a tag. Snapshots will ignore
+  # this setting.
+  # Notice: for this to work your `build.main` must be a package, not a `.go` file.
+  #
+  # Default: false.
+  proxy: true
+
+  # If proxy is true, use these environment variables when running `go mod`
+  # commands (namely, `go mod tidy`).
+  #
+  # Default: `os.Environ()` merged with what you set the root `env` section.
+  env:
+    - GOPROXY=https://proxy.golang.org,direct
+    - GOSUMDB=sum.golang.org
+
+  # Sets the `-mod` flag value.
+  #
+  # Default: empty.
+  # Since: v1.7.
+  mod: mod
+
+  # Which Go binary to use.
+  #
+  # Default: `go`.
+  gobinary: go1.19
+universal_binaries:
+  - name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    replace: true
+announce:
+  teams:
+    enabled: false
+    title_template: 'Terraform Provider idealo_tools {{ .Tag }} was just released!'
+    message_template: 'Awesome terraform provider {{.Tag}} is out!'
+    color: '#2D313E'
+    #icon_url: 'https://csd.aws.idealo.cloud/avatar.png'
+
+
+# modelines, feel free to remove those if you don't want/use them:
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj

@@ -2,7 +2,7 @@
 
 Terraform provider for the common domain product. With this provider you can register DNS zones under the `idealo.tools` domain. For example `jira.idealo.tools` or `confluence.idealo.tools`.
 
-_Keep in mind that your FQDN shouldn't exceed 64 characters (including the final dot) to retrieve a TLS certificate for it. Any alternate domain names can be up to 256 characters long._
+_Keep in mind that your FQDN shouldn't exceed 64 characters (including the final dot) to retrieve a TLS certificate._
 
 # Installation
 
@@ -11,6 +11,16 @@ _tbd_
 # Usage
 
 ```terraform
+terraform {
+    required_providers {
+      idealo-tools = {
+        source  = "github.com/idealo/terraform-provider-idealo_tools"
+        version = "0.1.0-202301012311"
+      }
+    }
+  }
+}
+
 provider "aws" {}
 provider "idealo_tools" {}
 
