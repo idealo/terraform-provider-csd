@@ -83,11 +83,11 @@ func main() {
 	e := echo.New()
 	e.Pre(middleware.RemoveTrailingSlash())
 
-	e.POST("/zones", saveZone)
-	e.GET("/zones", getZones)
-	e.GET("/zones/:name", getZone)
-	e.PUT("/zones/:name", updateZone)
-	e.DELETE("/zones/:name", deleteZone)
+	e.POST("/api/v1/zones", saveZone)
+	e.GET("/api/v1/zones", getZones)
+	e.GET("/api/v1/zones/:name", getZone)
+	e.PUT("/api/v1/zones/:name", updateZone)
+	e.DELETE("/api/v1/zones/:name", deleteZone)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

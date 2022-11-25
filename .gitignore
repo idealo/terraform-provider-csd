@@ -1,4 +1,5 @@
 csd/csd
+terraform-provider-idealo-tools
 
 # goreleader
 dist/
