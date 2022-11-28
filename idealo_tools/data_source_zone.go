@@ -71,7 +71,7 @@ func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.FromErr(err)
 	}
 
-	// always run
+	// always run; set the resource ID
 	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 
 	return diags

@@ -4,7 +4,7 @@ NAMESPACE=transport
 NAME=idealo-tools
 BINARY=terraform-provider-${NAME}
 VERSION=0.0.1
-OS_ARCH=$(shell go version | awk '{gsub("/","_");print $4}')
+OS_ARCH=$(shell go version | awk '{gsub("/","_");print $$4}')
 
 .PHONY: clean
 
@@ -12,7 +12,6 @@ default: help
 
 clean:
 	rm -fr ${BINARY}
-	rm -fr csd/csd
 
 build: clean
 	go build -o ${BINARY}
@@ -25,11 +24,13 @@ format:
 	go fmt ./...
 
 install: build
-	install -Dm0755 ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	#install -Dm0755 ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}/${BINARY}_v${VERSION}
+	install -Dm0755 ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}/${BINARY}
 
 uninstall:
 	rm -fr ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}
 
-fake_api: clean
+fake_api:
+	rm -fr csd/csd
 	cd csd; go build -o csd
 	./csd/csd
