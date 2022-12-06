@@ -12,18 +12,36 @@ _tbd_
 
 ```terraform
 terraform {
-    required_providers {
-      idealo-tools = {
-        source  = "github.com/idealo/terraform-provider-idealo_tools"
-        version = "0.1.0-202301012311"
-      }
+  required_version = ">= 1.3"
+  required_providers {
+    idealo-tools = {
+      source  = "github.com/idealo/terraform-provider-idealo-tools"
+      version = "~>1.0"
     }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~>4.8"
+    }
+  }
+  backend "s3" {
+    bucket         = "<ENTER_BUCKET_NAME>"
+    key            = "global/s3/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
   }
 }
 
-provider "aws" {}
+# Setup AWS provider
+provider "aws" {
+  region              = "eu-central-1"
+  allowed_account_ids = ["<ENTER_ACCOUNT_ID>"]
+}
+
+# Setup idealo-tools provider (will use the AWS provider internally)
 provider "idealo_tools" {}
 
+# Setup OIDC provider
 module "terraform_execution_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version = "~> 4.3"
@@ -43,10 +61,12 @@ module "terraform_execution_role" {
   number_of_role_policy_arns = 1
 }
 
+# Create desired zone in Route53
 resource "aws_route53_zone" "shopverwaltung" {
   name = "shopverwaltung.idealo.cloud"
 }
 
+# Create zone forwarding in idealo-tools zone
 resource "idealo_tools_zone" "shopverwaltung" {
   name         = aws_route53_zone.shopverwaltung.name
   name_servers = aws_route53_zone.shopverwaltung.name_servers
