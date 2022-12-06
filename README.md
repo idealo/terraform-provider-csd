@@ -24,6 +24,25 @@ terraform {
 provider "aws" {}
 provider "idealo_tools" {}
 
+module "terraform_execution_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version = "~> 4.3"
+ 
+  create_role = true
+  role_name = "<ENTER_ROLE_NAME>"
+  max_session_duration = 6 * 60 * 60
+ 
+  provider_url = "token.actions.githubusercontent.com"
+  oidc_subjects_with_wildcards = [
+    "repo:idealo/<ENTER_REPO_NAME>:*",
+  ]
+ 
+  role_policy_arns = [
+    "arn:aws:iam::aws:policy/<ENTER_POLICY_NAME>",
+  ]
+  number_of_role_policy_arns = 1
+}
+
 resource "aws_route53_zone" "shopverwaltung" {
   name = "shopverwaltung.idealo.cloud"
 }
