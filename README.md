@@ -42,6 +42,7 @@ provider "aws" {
 provider "idealo_tools" {}
 
 # Setup OIDC provider
+# https://confluence.eu.idealo.com/pages/viewpage.action?spaceKey=PTN&title=How+to+authenticate+from+GitHub+to+AWS
 module "terraform_execution_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version = "~> 4.3"
