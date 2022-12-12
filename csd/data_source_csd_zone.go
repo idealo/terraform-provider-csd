@@ -11,12 +11,6 @@ import (
 	"time"
 )
 
-type Zone struct {
-	Name        string   `json:"name"`
-	NameServers []string `json:"name_servers"`
-	Owner       string   `json:"owner"`
-}
-
 func dataSourceCsdZone() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceCsdZoneRead,

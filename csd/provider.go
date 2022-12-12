@@ -7,6 +7,12 @@ import (
 // ApiEndpoint TODO: replace with production endpoint
 var ApiEndpoint = "http://localhost:8080"
 
+type Zone struct {
+	Name        string   `json:"name"`
+	NameServers []string `json:"name_servers"`
+	Owner       string   `json:"owner"`
+}
+
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{

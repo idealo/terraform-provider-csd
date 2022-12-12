@@ -71,6 +71,8 @@ func dataSourceCsdZonesRead(ctx context.Context, d *schema.ResourceData, m inter
 
 	// decode the response
 	zones := make([]map[string]interface{}, 0)
+	// TODO: make this work:
+	// zones := make([]map[string]Zone, 0)
 	err = json.NewDecoder(r.Body).Decode(&zones)
 	if err != nil {
 		return diag.FromErr(err)
