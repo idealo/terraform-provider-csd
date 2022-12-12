@@ -48,6 +48,16 @@ func dataSourceCsdZonesRead(ctx context.Context, d *schema.ResourceData, m inter
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
+	// https://docs.aws.amazon.com/general/latest/gr/create-signed-request.html#create-canonical-request
+	// https://github.com/aws/aws-sdk-go-v2/blob/main/aws/signer/v4/v4.go
+
+	// HTTPMethod 			"GET"
+	// CanonicalUri 		"/api/v1/zones"
+	// CanonicalQueryString	""
+	// CanonicalHeaders 	"host:csd.idealo.cloud"
+	// SignedHeaders 		"host"
+	// HashedPayload 		"..."
+
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/zones", ApiEndpoint), nil)
 	if err != nil {
 		return diag.FromErr(err)

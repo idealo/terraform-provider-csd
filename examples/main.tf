@@ -27,3 +27,11 @@ data "csd_zones" "all" {}
 output "zones" {
   value = data.csd_zones.all
 }
+
+data "csd_zone" "jira" {
+  name = "jira.idealo.tools"
+}
+
+output "jira" {
+  value = data.csd_zone.jira
+}

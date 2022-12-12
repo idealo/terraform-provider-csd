@@ -39,12 +39,12 @@ func getZone(c echo.Context) error {
 func getZones(c echo.Context) error {
 	return c.JSON(http.StatusOK, []Zone{
 		Zone{
-			Name:        "jira",
+			Name:        "jira.idealo.tools",
 			NameServers: []string{"ns1.aws.example.com", "ns2.aws.example.net"},
 			Owner:       "123456789",
 		},
 		Zone{
-			Name:        "confluence",
+			Name:        "confluence.idealo.tools",
 			NameServers: []string{"ns23.aws.example.com", "ns42.aws.example.net"},
 			Owner:       "987654321",
 		},
