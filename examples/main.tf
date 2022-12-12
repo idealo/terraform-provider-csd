@@ -1,15 +1,15 @@
 terraform {
   required_providers {
-    idealo-tools = {
-      version = "0.0.1"
-      source = "idealoo.com/transport/idealo-tools"
+    csd = {
+      version = "~> 0.0.1"
+      source = "idealo.com/transport/csd"
     }
     #aws = {}
   }
   required_version = "~> 1.0"
 }
 
-provider "idealo-tools" {}
+#provider "idealo-tools" {}
 #provider "aws" {}
 
 #resource "aws_route53_zone" "myzone" {
@@ -22,9 +22,8 @@ provider "idealo-tools" {}
 #}
 
 
-data "idealo_tools_zones" "all" {}
+data "csd_zones" "all" {}
 
-
-output "jira_zone" {
-  value = data.idealo_tools_zones.all.zones
+output "zones" {
+  value = data.csd_zones.all
 }

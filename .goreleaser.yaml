@@ -100,7 +100,7 @@ universal_binaries:
 announce:
   teams:
     enabled: false
-    title_template: 'Terraform Provider idealo_tools {{ .Tag }} was just released!'
+    title_template: 'Terraform Provider csd {{ .Tag }} was just released!'
     message_template: 'Awesome terraform provider {{.Tag}} is out!'
     color: '#2D313E'
     #icon_url: 'https://csd.aws.idealo.cloud/avatar.png'

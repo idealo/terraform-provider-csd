@@ -1,5 +1,6 @@
-csd/csd
-terraform-provider-idealo-tools
+facade/csd
+terraform-provider-csd
+examples/.terraform.lock.hcl
 
 # goreleader
 dist/

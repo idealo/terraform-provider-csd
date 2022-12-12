@@ -1,4 +1,4 @@
-package idealo_tools
+package csd
 
 import (
 	"context"
@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-func dataSourceZones() *schema.Resource {
+func dataSourceCsdZones() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceZonesRead,
+		ReadContext: dataSourceCsdZonesRead,
 		Schema: map[string]*schema.Schema{
 			"zones": &schema.Schema{
 				Type:     schema.TypeList,
@@ -43,14 +43,13 @@ func dataSourceZones() *schema.Resource {
 	}
 }
 
-func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceCsdZonesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	// TODO: replace with production endpoint
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/zones", "http://localhost:8080"), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/zones", ApiEndpoint), nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -61,17 +60,19 @@ func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	defer r.Body.Close()
 
+	// decode the response
 	zones := make([]map[string]interface{}, 0)
 	err = json.NewDecoder(r.Body).Decode(&zones)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
+	// sets the response body (list of zone object) to Terraform zones data source
 	if err := d.Set("zones", zones); err != nil {
 		return diag.FromErr(err)
 	}
 
-	// always run; set the resource ID
+	// always run; set the resource ID to timestamp (forces this resource to refresh during every Terraform apply)
 	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 
 	return diags

@@ -1,15 +1,17 @@
-package idealo_tools
+package csd
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// Provider -
+// ApiEndpoint TODO: replace with production endpoint
+var ApiEndpoint = "http://localhost:8080"
+
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{},
 		DataSourcesMap: map[string]*schema.Resource{
-			"idealo_tools_zones": dataSourceZones(),
+			"csd_zones": dataSourceCsdZones(),
 		},
 	}
 }
