@@ -9,18 +9,18 @@ terraform {
   required_version = "~> 1.0"
 }
 
-#provider "idealo-tools" {}
+provider "csd" {}
+
 #provider "aws" {}
 
 #resource "aws_route53_zone" "myzone" {
 #  name = "myapp.idealo.tools"
 #}
 #
-#resource "idealo_tools_zone" "myzone" {
+#resource "csd_zone" "myzone" {
 #  name = aws_route53_zone.myzone.name
 #  name_servers = aws_route53_zone.myzone.name_servers
 #}
-
 
 data "csd_zones" "all" {}
 

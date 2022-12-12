@@ -15,24 +15,23 @@ func dataSourceCsdZones() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceCsdZonesRead,
 		Schema: map[string]*schema.Schema{
-			"zones": &schema.Schema{
+			"zones": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"name_servers": &schema.Schema{
+						"name_servers": {
 							Type:     schema.TypeList,
 							Computed: true,
 							Elem: &schema.Schema{
-								Type:     schema.TypeString,
-								Computed: true,
+								Type: schema.TypeString,
 							},
 						},
-						"owner": &schema.Schema{
+						"owner": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
