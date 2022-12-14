@@ -16,9 +16,9 @@ type Zone struct {
 }
 
 type AuthInfo struct {
-	AccessKeyId string
+	AccessKeyId     string
 	SecretAccessKey string
-	SessionToken string
+	SessionToken    string
 }
 
 func Provider() *schema.Provider {
@@ -43,12 +43,14 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("AWS_SESSION_TOKEN", nil),
 			},
 		},
-		ResourcesMap: map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"csd_zone": resourceZone(),
+		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"csd_zones": dataSourceCsdZones(),
 			"csd_zone":  dataSourceCsdZone(),
 		},
-		//ConfigureContextFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
@@ -63,9 +65,9 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	if (awsAccessKeyId != "") && (awsSecretAccessKey != "") && (awsSessionToken != "") {
 		// TODO: replace with http header generation
 		return AuthInfo{
-			AccessKeyId: awsAccessKeyId,
+			AccessKeyId:     awsAccessKeyId,
 			SecretAccessKey: awsSecretAccessKey,
-			SessionToken: awsSessionToken,
+			SessionToken:    awsSessionToken,
 		}, diags
 	}
 

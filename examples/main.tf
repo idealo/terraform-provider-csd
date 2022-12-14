@@ -35,3 +35,16 @@ data "csd_zone" "jira" {
 output "jira" {
   value = data.csd_zone.jira
 }
+
+resource "csd_zone" "confluence" {
+  name = "confluence.idealo.tools"
+  name_servers = [
+    "ns1.aws.example.net",
+    "ns2.aws.example.com"
+  ]
+  owner = "123456789"
+}
+
+output "confluence" {
+  value = csd_zone.confluence
+}
