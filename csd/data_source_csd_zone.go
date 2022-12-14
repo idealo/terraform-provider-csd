@@ -40,6 +40,7 @@ func dataSourceCsdZoneRead(ctx context.Context, d *schema.ResourceData, m interf
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
+	//
 	name := d.Get("name").(string)
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/zones/%s", ApiEndpoint, name), nil)
