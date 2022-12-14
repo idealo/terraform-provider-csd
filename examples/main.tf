@@ -24,7 +24,7 @@ provider "csd" {}
 
 data "csd_zones" "all" {}
 
-output "zones" {
+output "test_data_read_zones" {
   value = data.csd_zones.all
 }
 
@@ -32,7 +32,7 @@ data "csd_zone" "jira" {
   name = "jira.idealo.tools"
 }
 
-output "jira" {
+output "test_data_read_zone" {
   value = data.csd_zone.jira
 }
 
@@ -45,6 +45,6 @@ resource "csd_zone" "confluence" {
   owner = "123456789"
 }
 
-output "confluence" {
+output "test_resource_create_zone" {
   value = csd_zone.confluence
 }
