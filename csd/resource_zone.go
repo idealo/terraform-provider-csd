@@ -34,6 +34,14 @@ func resourceZone() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"last_updated": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -118,12 +126,70 @@ func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}
 }
 
 func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// Check for resource changes (only name servers are relevant at the moment)
+	if d.HasChange("name_servers") {
+		// TODO: get authentication infos for http connection
+		// clientThing := m.(*hc.Client)
+
+		client := &http.Client{Timeout: 10 * time.Second}
+
+		name := d.Id()
+		zone := Zone{
+			Name:        name,
+			NameServers: []string{},
+			Owner:       d.Get("owner").(string),
+		}
+		for _, ns := range d.Get("name_servers").([]interface{}) {
+			zone.NameServers = append(zone.NameServers, ns.(string))
+		}
+
+		buf := new(bytes.Buffer)
+		err := json.NewEncoder(buf).Encode(zone)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/zones/%s", ApiEndpoint, name), buf)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		r, err := client.Do(req)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		defer r.Body.Close()
+
+		// TODO: remove if unnecessary
+		if err := d.Set("last_updated", time.Now().Format(time.RFC850)); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	return resourceZoneRead(ctx, d, m)
 }
 
 func resourceZoneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
+
+	name := d.Id()
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/api/v1/zones/%s", ApiEndpoint, name), nil)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	r, err := client.Do(req)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	defer r.Body.Close()
+
+	// d.SetId("") is automatically called assuming delete returns no errors, but
+	// it is added here for explicitness.
+	d.SetId("")
 
 	return diags
 }
