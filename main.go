@@ -7,6 +7,9 @@ import (
 	"github.com/idealo/terraform-provider-idealo-tools/csd"
 )
 
+// Generate the Terraform provider documentation using `tfplugindocs`:
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+
 func main() {
 	var debugMode bool
 
