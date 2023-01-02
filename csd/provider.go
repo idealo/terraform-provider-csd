@@ -34,12 +34,12 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("AWS_SESSION_TOKEN", nil),
 			},
 		},
-		ResourcesMap: map[string]*schema.Resource{
-			"csd_zone": resourceZone(),
-		},
+		//ResourcesMap: map[string]*schema.Resource{
+		//	"csd_zone": resourceZone(),
+		//},
 		DataSourcesMap: map[string]*schema.Resource{
 			"csd_zones": dataSourceZones(),
-			"csd_zone":  dataSourceZone(),
+			//"csd_zone":  dataSourceZone(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
