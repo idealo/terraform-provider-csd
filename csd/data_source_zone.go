@@ -2,11 +2,8 @@ package csd
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -35,7 +32,7 @@ func dataSourceZone() *schema.Resource {
 }
 
 func dataSourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := &http.Client{Timeout: 10 * time.Second}
+	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
@@ -43,20 +40,7 @@ func dataSourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface
 	//
 	name := d.Get("name").(string)
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/zones/%s", ApiEndpoint, name), nil)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	r, err := client.Do(req)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	defer r.Body.Close()
-
-	// decode the response
-	zone := Zone{}
-	err = json.NewDecoder(r.Body).Decode(&zone)
+	zone, err := apiClient.ReadZone(name)
 	if err != nil {
 		return diag.FromErr(err)
 	}

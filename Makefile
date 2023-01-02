@@ -28,7 +28,8 @@ uninstall:  ## Remove provider
 tf: install  ## Run example terraform
 	rm -fr examples/.terraform.lock.hcl examples/.terraform
 	cd examples; terraform init
-	cd examples; env AWS_ACCESS_KEY_ID=aaa AWS_SECRET_ACCESS_KEY=aaa AWS_SESSION_TOKEN=aaa terraform apply --auto-approve
+	#cd examples; env AWS_ACCESS_KEY_ID=aaa AWS_SECRET_ACCESS_KEY=aaa AWS_SESSION_TOKEN=aaa terraform apply --auto-approve
+	cd examples; terraform apply --auto-approve
 
 fake_api:  ## Build fake API
 	rm -fr csd/csd

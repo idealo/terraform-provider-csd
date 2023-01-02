@@ -6,19 +6,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// ApiEndpoint TODO: replace with production endpoint
-const ApiEndpoint = "http://localhost:8080"
-
 type Zone struct {
 	Name        string   `json:"name"`
 	NameServers []string `json:"name_servers"`
 	Owner       string   `json:"owner"`
-}
-
-type AuthInfo struct {
-	AccessKeyId     string
-	SecretAccessKey string
-	SessionToken    string
 }
 
 func Provider() *schema.Provider {
@@ -63,11 +54,13 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	var diags diag.Diagnostics
 
 	if (awsAccessKeyId != "") && (awsSecretAccessKey != "") && (awsSessionToken != "") {
-		// TODO: replace with http header generation
-		return AuthInfo{
-			AccessKeyId:     awsAccessKeyId,
-			SecretAccessKey: awsSecretAccessKey,
-			SessionToken:    awsSessionToken,
+		// TODO: prepare http client with signer etc
+		return ApiClient{
+			AuthInfo{
+				AccessKeyId:     awsAccessKeyId,
+				SecretAccessKey: awsSecretAccessKey,
+				SessionToken:    awsSessionToken,
+			},
 		}, diags
 	}
 
@@ -76,22 +69,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		Summary:  "Unable to find authentication info for AWS",
 		Detail:   "One of aws_access_key_id, aws_secret_access_key or aws_session_token is missing",
 	})
-
-	return nil, diags
-}
-
-func providerConfigure2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	username := d.Get("username").(string)
-	password := d.Get("password").(string)
-
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
-
-	if (username != "") && (password != "") {
-		apiClient := ApiClient{Username: username, Password: password}
-
-		return apiClient, diags
-	}
 
 	return nil, diags
 }

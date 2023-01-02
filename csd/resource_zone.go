@@ -1,13 +1,9 @@
 package csd
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 	"time"
 )
 
@@ -30,10 +26,6 @@ func resourceZone() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"owner": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
 			"last_updated": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -47,7 +39,7 @@ func resourceZone() *schema.Resource {
 }
 
 func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiClient := m.(*ApiClient)
+	apiClient := m.(ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
@@ -55,7 +47,6 @@ func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface
 	zone := Zone{
 		Name:        d.Get("name").(string),
 		NameServers: []string{},
-		Owner:       d.Get("owner").(string),
 	}
 	for _, ns := range d.Get("name_servers").([]interface{}) {
 		zone.NameServers = append(zone.NameServers, ns.(string))
@@ -73,27 +64,14 @@ func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := &http.Client{Timeout: 10 * time.Second}
+	apiClient := m.(ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
 	name := d.Id()
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/zones/%s", ApiEndpoint, name), nil)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	r, err := client.Do(req)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	defer r.Body.Close()
-
-	// decode the response
-	zone := Zone{}
-	err = json.NewDecoder(r.Body).Decode(&zone)
+	zone, err := apiClient.ReadZone(name)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -115,37 +93,20 @@ func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}
 func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Check for resource changes (only name servers are relevant at the moment)
 	if d.HasChange("name_servers") {
-		// TODO: get authentication infos for http connection
-		// clientThing := m.(*hc.Client)
-
-		client := &http.Client{Timeout: 10 * time.Second}
+		apiClient := m.(ApiClient)
 
 		name := d.Id()
 		zone := Zone{
 			Name:        name,
 			NameServers: []string{},
-			Owner:       d.Get("owner").(string),
 		}
 		for _, ns := range d.Get("name_servers").([]interface{}) {
 			zone.NameServers = append(zone.NameServers, ns.(string))
 		}
 
-		buf := new(bytes.Buffer)
-		err := json.NewEncoder(buf).Encode(zone)
-		if err != nil {
+		if err := apiClient.UpdateZone(zone); err != nil {
 			return diag.FromErr(err)
 		}
-
-		req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/zones/%s", ApiEndpoint, name), buf)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-
-		r, err := client.Do(req)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		defer r.Body.Close()
 
 		// TODO: remove if unnecessary
 		if err := d.Set("last_updated", time.Now().Format(time.RFC850)); err != nil {
@@ -157,22 +118,16 @@ func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceZoneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	apiClient := m.(ApiClient)
+
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
 	name := d.Id()
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/api/v1/zones/%s", ApiEndpoint, name), nil)
-	if err != nil {
+	if err := apiClient.DeleteZone(name); err != nil {
 		return diag.FromErr(err)
 	}
-
-	r, err := client.Do(req)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	defer r.Body.Close()
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
 	// it is added here for explicitness.

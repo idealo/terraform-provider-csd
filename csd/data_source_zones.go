@@ -2,11 +2,8 @@ package csd
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -43,35 +40,12 @@ func dataSourceZones() *schema.Resource {
 }
 
 func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := &http.Client{Timeout: 10 * time.Second}
+	apiClient := m.(ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	// https://docs.aws.amazon.com/general/latest/gr/create-signed-request.html#create-canonical-request
-	// https://github.com/aws/aws-sdk-go-v2/blob/main/aws/signer/v4/v4.go
-
-	// HTTPMethod 			"GET"
-	// CanonicalUri 		"/api/v1/zones"
-	// CanonicalQueryString	""
-	// CanonicalHeaders 	"host:csd.idealo.cloud"
-	// SignedHeaders 		"host"
-	// HashedPayload 		"..."
-
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/zones", ApiEndpoint), nil)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	r, err := client.Do(req)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	defer r.Body.Close()
-
-	// decode the response
-	zones := make([]map[string]interface{}, 0)
-	err = json.NewDecoder(r.Body).Decode(&zones)
+	zones, err := apiClient.ReadZones()
 	if err != nil {
 		return diag.FromErr(err)
 	}
