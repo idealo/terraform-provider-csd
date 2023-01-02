@@ -47,7 +47,7 @@ func resourceZone() *schema.Resource {
 }
 
 func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := &http.Client{Timeout: 10 * time.Second}
+	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
@@ -61,22 +61,9 @@ func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface
 		zone.NameServers = append(zone.NameServers, ns.(string))
 	}
 
-	buf := new(bytes.Buffer)
-	err := json.NewEncoder(buf).Encode(zone)
-	if err != nil {
+	if err := apiClient.CreateZone(zone); err != nil {
 		return diag.FromErr(err)
 	}
-
-	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/api/v1/zones", ApiEndpoint), buf)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	r, err := client.Do(req)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	defer r.Body.Close()
 
 	d.SetId(zone.Name)
 

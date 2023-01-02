@@ -79,3 +79,19 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	return nil, diags
 }
+
+func providerConfigure2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	username := d.Get("username").(string)
+	password := d.Get("password").(string)
+
+	// Warning or errors can be collected in a slice type
+	var diags diag.Diagnostics
+
+	if (username != "") && (password != "") {
+		apiClient := ApiClient{Username: username, Password: password}
+
+		return apiClient, diags
+	}
+
+	return nil, diags
+}
