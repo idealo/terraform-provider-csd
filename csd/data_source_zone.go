@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-func dataSourceCsdZone() *schema.Resource {
+func dataSourceZone() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceCsdZoneRead,
+		ReadContext: dataSourceZoneRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
@@ -34,7 +34,7 @@ func dataSourceCsdZone() *schema.Resource {
 	}
 }
 
-func dataSourceCsdZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	// Warning or errors can be collected in a slice type

@@ -47,8 +47,8 @@ func Provider() *schema.Provider {
 			"csd_zone": resourceZone(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"csd_zones": dataSourceCsdZones(),
-			"csd_zone":  dataSourceCsdZone(),
+			"csd_zones": dataSourceZones(),
+			"csd_zone":  dataSourceZone(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
