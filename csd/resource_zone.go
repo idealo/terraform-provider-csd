@@ -1,9 +1,13 @@
 package csd
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"strings"
 	"time"
 )
 
@@ -52,8 +56,12 @@ func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface
 		zone.NameServers = append(zone.NameServers, ns.(string))
 	}
 
-	if err := apiClient.CreateZone(zone); err != nil {
+	buffer := new(bytes.Buffer)
+	if err := json.NewEncoder(buffer).Encode(zone); err != nil {
 		return diag.FromErr(err)
+	}
+	if err := apiClient.curl("POST", "/v1/zones", buffer, nil); err != nil {
+		return err
 	}
 
 	d.SetId(zone.Name)
@@ -71,9 +79,9 @@ func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}
 
 	name := d.Id()
 
-	zone, err := apiClient.ReadZone(name)
-	if err != nil {
-		return diag.FromErr(err)
+	var zone Zone
+	if err := apiClient.curl("GET", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""), zone); err != nil {
+		return err
 	}
 
 	// sets the response body (zone object) to Terraform zone data source
@@ -104,8 +112,12 @@ func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			zone.NameServers = append(zone.NameServers, ns.(string))
 		}
 
-		if err := apiClient.UpdateZone(zone); err != nil {
+		buffer := new(bytes.Buffer)
+		if err := json.NewEncoder(buffer).Encode(zone); err != nil {
 			return diag.FromErr(err)
+		}
+		if err := apiClient.curl("PUT", fmt.Sprintf("/v1/zones/%s", name), buffer, nil); err != nil {
+			return err
 		}
 
 		// TODO: remove if unnecessary
@@ -125,8 +137,8 @@ func resourceZoneDelete(ctx context.Context, d *schema.ResourceData, m interface
 
 	name := d.Id()
 
-	if err := apiClient.DeleteZone(name); err != nil {
-		return diag.FromErr(err)
+	if err := apiClient.curl("DELETE", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""), nil); err != nil {
+		return err
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but

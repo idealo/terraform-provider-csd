@@ -2,9 +2,11 @@ package csd
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -33,16 +35,13 @@ func dataSourceZone() *schema.Resource {
 
 func dataSourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiClient := m.(*ApiClient)
-
-	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	//
 	name := d.Get("name").(string)
 
-	zone, err := apiClient.ReadZone(name)
-	if err != nil {
-		return diag.FromErr(err)
+	var zone Zone
+	if err := apiClient.curl("GET", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""), zone); err != nil {
+		return err
 	}
 
 	// sets the response body (zone object) to Terraform zone data source

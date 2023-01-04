@@ -1,40 +1,34 @@
 package csd
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"io"
 	"net/http"
 	"time"
 )
 
+// HostURL Set to production endpoint of API
 const HostURL string = "https://6zrrgc0ria.execute-api.eu-central-1.amazonaws.com"
 
-type AuthInfo struct {
+// ApiClient that holds authentication details and convenience functions that wrap HTTP communication
+type ApiClient struct {
 	AccessKeyId     string
 	SecretAccessKey string
 	SessionToken    string
 }
 
-type ApiClient struct {
-	AuthInfo AuthInfo
-}
+func (c *ApiClient) curl(method string, path string, body io.Reader, output interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
 
-func (c *ApiClient) CreateZone(zone Zone) error {
 	client := &http.Client{Timeout: 10 * time.Second}
-
-	buffer := new(bytes.Buffer)
-	if err := json.NewEncoder(buffer).Encode(zone); err != nil {
-		return err
-	}
-
-	request, err := http.NewRequest("PUT", fmt.Sprintf("%s/v1/zones", HostURL), buffer)
+	request, err := http.NewRequest(method, fmt.Sprintf("%s%s", HostURL, path), body)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
-
-	authorizationHeaders := signer(&c.AuthInfo, request)
-	request.Header.Add("X-Amz-Security-Token", c.AuthInfo.SessionToken)
+	authorizationHeaders := signer(request, c.AccessKeyId, c.SecretAccessKey, c.SessionToken)
+	request.Header.Add("X-Amz-Security-Token", c.SessionToken)
 	request.Header.Add("X-Amz-Date", authorizationHeaders.date)
 	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
 	request.Header.Add("content-type", "application/json")
@@ -42,120 +36,36 @@ func (c *ApiClient) CreateZone(zone Zone) error {
 
 	response, err := client.Do(request)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	defer response.Body.Close()
 
-	return err
-}
-
-func (c *ApiClient) ReadZone(name string) (Zone, error) {
-	zone := Zone{}
-
-	client := &http.Client{Timeout: 10 * time.Second}
-
-	request, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/zones/%s", HostURL, name), nil)
-	if err != nil {
-		return zone, err
+	if response.StatusCode == 403 {
+		// Create proper error message if AWS credentials are not valid, probably because they expired
+		var responseBody map[string]string
+		if err = json.NewDecoder(response.Body).Decode(&responseBody); err != nil {
+			return diag.FromErr(err)
+		}
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Couldn't authenticate to API, please check AWS credentials",
+			Detail:   responseBody["message"],
+		})
+	} else if response.StatusCode != 200 {
+		// Create error message for any other unexpected errors
+		body, _ := io.ReadAll(response.Body)
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Unexpected error message from API",
+			Detail:   fmt.Sprintf("HTTP %d: %s", response.StatusCode, body),
+		})
 	}
 
-	authorizationHeaders := signer(&c.AuthInfo, request)
-	request.Header.Add("X-Amz-Security-Token", c.AuthInfo.SessionToken)
-	request.Header.Add("X-Amz-Date", authorizationHeaders.date)
-	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
-	request.Header.Add("content-type", "application/json")
-	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
-
-	response, err := client.Do(request)
-	if err != nil {
-		return zone, err
-	}
-	defer response.Body.Close()
-
-	// decode the response
-	err = json.NewDecoder(response.Body).Decode(&zone)
-	if err != nil {
-		return zone, err
+	if output != nil {
+		if err := json.NewDecoder(response.Body).Decode(&output); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
-	return zone, nil
-}
-
-func (c *ApiClient) ReadZones() ([]Zone, error) {
-	client := &http.Client{Timeout: 10 * time.Second}
-
-	var zones []Zone
-
-	request, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/zones", HostURL), nil)
-	if err != nil {
-		return zones, err
-	}
-
-	response, err := client.Do(request)
-	if err != nil {
-		return zones, err
-	}
-	defer response.Body.Close()
-
-	// decode the response
-
-	err = json.NewDecoder(response.Body).Decode(&zones)
-	if err != nil {
-		return zones, err
-	}
-
-	return zones, nil
-}
-
-func (c *ApiClient) UpdateZone(zone Zone) error {
-	client := &http.Client{Timeout: 10 * time.Second}
-
-	buf := new(bytes.Buffer)
-	if err := json.NewEncoder(buf).Encode(zone); err != nil {
-		return err
-	}
-
-	request, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/zones/%s", HostURL, zone.Name), buf)
-	if err != nil {
-		return err
-	}
-
-	authorizationHeaders := signer(&c.AuthInfo, request)
-	request.Header.Add("X-Amz-Security-Token", c.AuthInfo.SessionToken)
-	request.Header.Add("X-Amz-Date", authorizationHeaders.date)
-	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
-	request.Header.Add("content-type", "application/json")
-	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
-
-	response, err := client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer response.Body.Close()
-
-	return nil
-}
-
-func (c *ApiClient) DeleteZone(name string) error {
-	client := &http.Client{Timeout: 10 * time.Second}
-
-	request, err := http.NewRequest("DELETE", fmt.Sprintf("%s/v1/zones/%s", HostURL, name), nil)
-	if err != nil {
-		return err
-	}
-
-	authorizationHeaders := signer(&c.AuthInfo, request)
-	request.Header.Add("X-Amz-Security-Token", c.AuthInfo.SessionToken)
-	request.Header.Add("X-Amz-Date", authorizationHeaders.date)
-	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
-	request.Header.Add("content-type", "application/json")
-	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
-
-	response, err := client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer response.Body.Close()
-
-	return nil
+	return diags
 }

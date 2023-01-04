@@ -2,12 +2,10 @@ package csd
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -43,42 +41,20 @@ func dataSourceZones() *schema.Resource {
 }
 
 func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiClient := m.(ApiClient)
-
-	client := &http.Client{Timeout: 10 * time.Second}
-
-	// Warning or errors can be collected in a slice type
+	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
-	request, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/zones", "https://6zrrgc0ria.execute-api.eu-central-1.amazonaws.com"), nil)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	var zones []Zone
 
-	authorizationHeaders := signer(&apiClient.AuthInfo, request)
-	request.Header.Add("X-Amz-Security-Token", apiClient.AuthInfo.SessionToken)
-	request.Header.Add("X-Amz-Date", authorizationHeaders.date)
-	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
-	request.Header.Add("content-type", "application/json")
-	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
-
-	response, err := client.Do(request)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	defer response.Body.Close()
-
-	zones := make([]map[string]interface{}, 0)
-	err = json.NewDecoder(response.Body).Decode(&zones)
-	if err != nil {
-		return diag.FromErr(err)
+	if err := apiClient.curl("GET", "/v1/zones", strings.NewReader(""), zones); err != nil {
+		return err
 	}
 
 	if err := d.Set("zones", zones); err != nil {
 		return diag.FromErr(err)
 	}
 
-	// always run
+	// always run; set the resource ID to timestamp (forces this resource to refresh during every Terraform apply)
 	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 
 	return diags
