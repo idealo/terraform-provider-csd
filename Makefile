@@ -2,8 +2,9 @@ HOSTNAME=idealo.com
 NAMESPACE=transport
 NAME=csd
 BINARY=terraform-provider-${NAME}
-VERSION=0.0.1
+VERSION=1.0.0
 OS_ARCH=$(shell go version | awk '{gsub("/","_");print $$4}')
+AWS_PROFILE=sandbox
 
 .PHONY: clean build format install uninstall tf fake_api help
 
@@ -27,9 +28,9 @@ uninstall:  ## Remove provider
 
 tf: install  ## Run example terraform
 	rm -fr examples/.terraform.lock.hcl examples/.terraform
-	cd examples; terraform init
+	cd examples; terraform init -upgrade
 	#cd examples; env AWS_ACCESS_KEY_ID=aaa AWS_SECRET_ACCESS_KEY=aaa AWS_SESSION_TOKEN=aaa terraform apply --auto-approve
-	cd examples; terraform apply --auto-approve
+	cd examples; env AWS_PROFILE=${AWS_PROFILE} terraform apply --auto-approve
 
 fake_api:  ## Build fake API
 	rm -fr csd/csd

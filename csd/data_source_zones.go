@@ -29,10 +29,6 @@ func dataSourceZones() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
-						"owner": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 					},
 				},
 			},
@@ -44,9 +40,8 @@ func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
-	var zones []Zone
-
-	if err := apiClient.curl("GET", "/v1/zones", strings.NewReader(""), zones); err != nil {
+	zones, err := apiClient.curl("GET", "/v1/zones", strings.NewReader(""))
+	if err != nil {
 		return err
 	}
 

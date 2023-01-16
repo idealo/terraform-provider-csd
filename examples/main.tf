@@ -1,32 +1,36 @@
 terraform {
+  required_version = "~> 1.3"
   required_providers {
     csd = {
-      version = "~> 0.0.1"
+      version = "~> 1.0"
       source = "idealo.com/transport/csd"
     }
     aws = {
-
+      source  = "hashicorp/aws"
+      version = "~>4.8"
     }
   }
-  required_version = "~> 1.0"
+}
+
+provider "aws" {
+  region              = "eu-central-1"
+  allowed_account_ids = ["433744410943"]
 }
 
 provider "csd" {}
 
-provider "aws" {}
+resource "aws_route53_zone" "myzone" {
+  name = "myzone.idealo.tools"
+}
 
-#resource "aws_route53_zone" "myzone" {
-#  name = "myapp.idealo.tools"
-#}
-#
-#resource "csd_zone" "myzone" {
-#  name = aws_route53_zone.myzone.name
-#  name_servers = aws_route53_zone.myzone.name_servers
-#}
+resource "csd_zone" "myzone" {
+  name = aws_route53_zone.myzone.name
+  name_servers = aws_route53_zone.myzone.name_servers
+}
 
-#output "test" {
-#  value = csd_zone.myzone.name
-#}
+output "test" {
+  value = csd_zone.myzone.name
+}
 
 data "csd_zones" "all" {}
 
@@ -34,14 +38,14 @@ output "test_data_read_zones" {
   value = data.csd_zones.all
 }
 
-#data "csd_zone" "jira" {
-#  name = "jira.idealo.tools"
+#data "csd_zone" "myzone" {
+#  name = "myzone.idealo.tools"
 #}
 #
 #output "test_data_read_zone" {
-#  value = data.csd_zone.jira
+#  value = data.csd_zone.myzone.name
 #}
-#
+
 #resource "csd_zone" "confluence" {
 #  name = "confluence.idealo.tools"
 #  name_servers = [

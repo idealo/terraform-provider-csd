@@ -39,16 +39,13 @@ func dataSourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface
 
 	name := d.Get("name").(string)
 
-	var zone Zone
-	if err := apiClient.curl("GET", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""), zone); err != nil {
+	zone, err := apiClient.curl("GET", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""))
+	if err != nil {
 		return err
 	}
 
 	// sets the response body (zone object) to Terraform zone data source
-	if err := d.Set("name_servers", zone.NameServers); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("owner", zone.Owner); err != nil {
+	if err := d.Set("name_servers", zone.(Zone).NameServers); err != nil {
 		return diag.FromErr(err)
 	}
 

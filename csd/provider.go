@@ -10,7 +10,6 @@ import (
 type Zone struct {
 	Name        string   `json:"name"`
 	NameServers []string `json:"name_servers"`
-	Owner       string   `json:"owner"`
 }
 
 func Provider() *schema.Provider {
@@ -95,7 +94,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 
 	// Test the connection to find out if credentials are valid and endpoint is working
-	if err := apiClient.curl("GET", "/v1/zones", strings.NewReader(""), nil); err != nil {
+	if _, err := apiClient.curl("GET", "/v1/zones", strings.NewReader("")); err != nil {
 		diags = append(diags, err...)
 	}
 

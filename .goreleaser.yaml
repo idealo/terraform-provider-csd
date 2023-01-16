@@ -19,14 +19,11 @@ builds:
       - linux
       - darwin
     goarch:
-      - '386'
       - amd64
       - arm64
     ignore:
       - goos: windows
         goarch: 'arm64'
-      - goos: darwin
-        goarch: '386'
     binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
   - format: zip
@@ -35,7 +32,6 @@ archives:
       darwin: Darwin
       linux: Linux
       windows: Windows
-      386: i386
       amd64: x86_64
     files:
       - README.md

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"golang.org/x/exp/slices"
 	"io"
 	"net/http"
 	"time"
@@ -19,13 +20,13 @@ type ApiClient struct {
 	SessionToken    string
 }
 
-func (c *ApiClient) curl(method string, path string, body io.Reader, output interface{}) diag.Diagnostics {
+func (c *ApiClient) curl(method string, path string, body io.Reader) (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	client := &http.Client{Timeout: 10 * time.Second}
 	request, err := http.NewRequest(method, fmt.Sprintf("%s%s", HostURL, path), body)
 	if err != nil {
-		return diag.FromErr(err)
+		return nil, diag.FromErr(err)
 	}
 	authorizationHeaders := signer(request, c.AccessKeyId, c.SecretAccessKey, c.SessionToken)
 	request.Header.Add("X-Amz-Security-Token", c.SessionToken)
@@ -36,36 +37,48 @@ func (c *ApiClient) curl(method string, path string, body io.Reader, output inte
 
 	response, err := client.Do(request)
 	if err != nil {
-		return diag.FromErr(err)
+		return nil, diag.FromErr(err)
 	}
 	defer response.Body.Close()
 
+	// TODO: react on 409 Conflict
 	if response.StatusCode == 403 {
 		// Create proper error message if AWS credentials are not valid, probably because they expired
 		var responseBody map[string]string
 		if err = json.NewDecoder(response.Body).Decode(&responseBody); err != nil {
-			return diag.FromErr(err)
+			return nil, diag.FromErr(err)
 		}
-		return append(diags, diag.Diagnostic{
+		return nil, append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Couldn't authenticate to API, please check AWS credentials",
 			Detail:   responseBody["message"],
 		})
-	} else if response.StatusCode != 200 {
+	} else if response.StatusCode == 409 {
+		var responseBody map[string]string
+		if err = json.NewDecoder(response.Body).Decode(&responseBody); err != nil {
+			return nil, diag.FromErr(err)
+		}
+		return nil, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Couldn't create zone",
+			Detail:   responseBody["message"],
+		})
+	} else if !slices.Contains([]int{200, 201, 204}, response.StatusCode) {
 		// Create error message for any other unexpected errors
 		body, _ := io.ReadAll(response.Body)
-		return append(diags, diag.Diagnostic{
+		return nil, append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Unexpected error message from API",
 			Detail:   fmt.Sprintf("HTTP %d: %s", response.StatusCode, body),
 		})
 	}
 
+	var output interface{}
 	if output != nil {
 		if err := json.NewDecoder(response.Body).Decode(&output); err != nil {
-			return diag.FromErr(err)
+			return nil, diag.FromErr(err)
 		}
 	}
 
-	return diags
+	return output, diags
 }

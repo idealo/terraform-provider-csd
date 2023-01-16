@@ -1,3 +1,4 @@
+.envrc
 facade/csd
 terraform-provider-csd
 examples/.terraform.lock.hcl
