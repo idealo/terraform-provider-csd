@@ -100,8 +100,3 @@ announce:
     message_template: 'Awesome terraform provider {{.Tag}} is out!'
     color: '#2D313E'
     #icon_url: 'https://csd.aws.idealo.cloud/avatar.png'
-
-
-# modelines, feel free to remove those if you don't want/use them:
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
