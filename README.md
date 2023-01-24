@@ -51,7 +51,9 @@ provider "aws" {
   allowed_account_ids = ["<ENTER_ACCOUNT_ID>"]
 }
 
-# Setup idealo-tools provider (will use the AWS provider internally)
+# Setup idealo-tools provider
+# It will use the AWS credentials provided by environment variables or parameters
+# The OIDC provider sets up the neccessary environment variables by default
 provider "idealo_tools" {}
 
 # Setup OIDC provider
@@ -59,16 +61,16 @@ provider "idealo_tools" {}
 module "terraform_execution_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version = "~> 4.3"
- 
+
   create_role = true
   role_name = "<ENTER_ROLE_NAME>"
   max_session_duration = 6 * 60 * 60
- 
+
   provider_url = "token.actions.githubusercontent.com"
   oidc_subjects_with_wildcards = [
     "repo:idealo/<ENTER_REPO_NAME>:*",
   ]
- 
+
   role_policy_arns = [
     "arn:aws:iam::aws:policy/<ENTER_POLICY_NAME>",
   ]
@@ -90,3 +92,4 @@ resource "idealo_tools_zone" "shopverwaltung" {
 ---
 
 Made with ❤️ and ✨ by [🌐 Team Transport](https://github.com/orgs/idealo/teams/transport).
+
