@@ -1,4 +1,4 @@
-name: goreleaser
+name: Release
 
 on:
   push:
@@ -17,10 +17,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Fetch git tags
-        run: git fetch --force --tags
       - name: Setup Golang
         uses: actions/setup-go@v3
         with:
@@ -28,7 +24,7 @@ jobs:
           cache: true
       # TODO: Setup GPG for signing
       - name: Run goreleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v4
         with:
           distribution: goreleaser
           version: latest

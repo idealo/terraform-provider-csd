@@ -38,7 +38,9 @@ provider "aws" {
   allowed_account_ids = ["<ENTER_ACCOUNT_ID>"]
 }
 
-# Setup idealo-tools provider (will use the AWS provider internally)
+# Setup idealo-tools provider
+# It will use the AWS credentials provided by environment variables or parameters
+# The OIDC provider sets up the neccessary environment variables by default
 provider "idealo_tools" {}
 
 # Setup OIDC provider
@@ -76,4 +78,4 @@ resource "idealo_tools_zone" "shopverwaltung" {
 
 ---
 
-Made with 💖 by Team Transport.
+Made with 💖 by [🌐 Team Transport](https://github.com/orgs/idealo/teams/transport).
