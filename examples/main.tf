@@ -19,32 +19,32 @@ provider "aws" {
 
 provider "csd" {}
 
-resource "aws_route53_zone" "myzone" {
-  name = "myzone.idealo.tools"
-}
-
-resource "csd_zone" "myzone" {
-  name = aws_route53_zone.myzone.name
-  name_servers = aws_route53_zone.myzone.name_servers
-}
-
-output "test" {
-  value = csd_zone.myzone.name
-}
-
-data "csd_zones" "all" {}
-
-output "test_data_read_zones" {
-  value = data.csd_zones.all
-}
-
-#data "csd_zone" "myzone" {
+#resource "aws_route53_zone" "myzone" {
 #  name = "myzone.idealo.tools"
 #}
 #
-#output "test_data_read_zone" {
-#  value = data.csd_zone.myzone.name
+#resource "csd_zone" "myzone" {
+#  name = aws_route53_zone.myzone.name
+#  name_servers = aws_route53_zone.myzone.name_servers
 #}
+#
+#output "test" {
+#  value = csd_zone.myzone.name
+#}
+
+#data "csd_zones" "all" {}
+#
+#output "test_data_read_zones" {
+#  value = data.csd_zones.all
+#}
+
+data "csd_zone" "myzone" {
+  name = "myzone.idealo.tools"
+}
+
+output "test_data_read_zone" {
+  value = data.csd_zone.myzone.name
+}
 
 #resource "csd_zone" "confluence" {
 #  name = "confluence.idealo.tools"

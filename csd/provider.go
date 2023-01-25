@@ -49,7 +49,7 @@ func Provider() *schema.Provider {
 // providerConfigure Stores the AWS credentials from the provider configuration so later HTTP requests can use them
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	/*
-		AWS credentials will be grabbed from environment variable or from the terraform provider configuration like this:
+		AWS credentials will be grabbed from environment variables or from the terraform provider configuration like this:
 		provider "csd" {
 		  aws_access_key_id     = "superSecret123!"
 		  aws_secret_access_key = "superSecret123!"

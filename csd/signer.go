@@ -15,7 +15,8 @@ type Authorizer struct {
 	payloadHash          []byte
 }
 
-func signer(request *http.Request, accessKeyId string, secretAccessKey string, sessionToken string) *Authorizer {
+// signRequest prepares a request with proper AWS Signer v4 authentication
+func signRequest(request *http.Request, accessKeyId string, secretAccessKey string, sessionToken string) {
 	currentTime := time.Now().UTC()
 
 	const (
@@ -46,11 +47,11 @@ func signer(request *http.Request, accessKeyId string, secretAccessKey string, s
 
 	var signature = fmt.Sprintf("AWS4-HMAC-SHA256 Credential=%s/%s/%s/%s/aws4_request, SignedHeaders=%s;x-amz-date, Signature=%x", accessKeyId, currentTime.Format(dateFmt), awsRegion, awsService, signedHeaders, requestSignature)
 
-	return &Authorizer{
-		authorizationHeaders: signature,
-		date:                 currentTime.Format(timeFmt),
-		payloadHash:          requestPayloadHash,
-	}
+	request.Header.Add("X-Amz-Security-Token", sessionToken)
+	request.Header.Add("X-Amz-Date", currentTime.Format(timeFmt))
+	request.Header.Add("Authorization", signature)
+	request.Header.Add("content-type", "application/json")
+	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", requestPayloadHash))
 }
 
 func hashSHA256(data []byte) []byte {

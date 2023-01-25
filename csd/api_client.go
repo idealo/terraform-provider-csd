@@ -7,6 +7,7 @@ import (
 	"golang.org/x/exp/slices"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -20,6 +21,52 @@ type ApiClient struct {
 	SessionToken    string
 }
 
+func (c *ApiClient) getZone(name string) (Zone, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	var zone Zone
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	request, err := http.NewRequest("GET", fmt.Sprintf("%s/zones/%s", HostURL, name), strings.NewReader(""))
+	if err != nil {
+		return zone, diag.FromErr(err)
+	}
+	signRequest(request, c.AccessKeyId, c.SecretAccessKey, c.SessionToken)
+	if err != nil {
+		return zone, diag.FromErr(err)
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		return zone, diag.FromErr(err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode == 403 {
+		// Create proper error message if AWS credentials are not valid, probably because they expired
+		var responseBody map[string]string
+		if err = json.NewDecoder(response.Body).Decode(&responseBody); err != nil {
+			return zone, diag.FromErr(err)
+		}
+		return zone, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Couldn't authenticate to API, please check AWS credentials",
+			Detail:   responseBody["message"],
+		})
+	} else if response.StatusCode != 200 {
+		// Create error message for any other unexpected errors
+		body, _ := io.ReadAll(response.Body)
+		return zone, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Unexpected error message from API",
+			Detail:   fmt.Sprintf("HTTP %d: %s", response.StatusCode, body),
+		})
+	}
+
+	if err := json.NewDecoder(response.Body).Decode(&zone); err != nil {
+		return zone, diag.FromErr(err)
+	}
+	return zone, diags
+}
+
 func (c *ApiClient) curl(method string, path string, body io.Reader) (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -28,12 +75,7 @@ func (c *ApiClient) curl(method string, path string, body io.Reader) (interface{
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	authorizationHeaders := signer(request, c.AccessKeyId, c.SecretAccessKey, c.SessionToken)
-	request.Header.Add("X-Amz-Security-Token", c.SessionToken)
-	request.Header.Add("X-Amz-Date", authorizationHeaders.date)
-	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
-	request.Header.Add("content-type", "application/json")
-	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
+	signRequest(request, c.AccessKeyId, c.SecretAccessKey, c.SessionToken)
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -41,7 +83,6 @@ func (c *ApiClient) curl(method string, path string, body io.Reader) (interface{
 	}
 	defer response.Body.Close()
 
-	// TODO: react on 409 Conflict
 	if response.StatusCode == 403 {
 		// Create proper error message if AWS credentials are not valid, probably because they expired
 		var responseBody map[string]string

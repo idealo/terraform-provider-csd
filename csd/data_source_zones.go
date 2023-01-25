@@ -2,6 +2,7 @@ package csd
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"strconv"
@@ -44,6 +45,8 @@ func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(zones)
 
 	if err := d.Set("zones", zones); err != nil {
 		return diag.FromErr(err)
