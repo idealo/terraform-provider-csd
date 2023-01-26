@@ -39,8 +39,13 @@ func dataSourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface
 		return err
 	}
 
+	nameServers := make([]interface{}, len(zone.NameServers), len(zone.NameServers))
+	for i, item := range zone.NameServers {
+		nameServers[i] = item
+	}
+
 	// sets the response body (zone object) to Terraform zone data source
-	if err := d.Set("name_servers", zone.NameServers); err != nil {
+	if err := d.Set("name_servers", nameServers); err != nil {
 		return diag.FromErr(err)
 	}
 

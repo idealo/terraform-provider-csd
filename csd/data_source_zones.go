@@ -2,11 +2,9 @@ package csd
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -41,14 +39,21 @@ func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
-	zones, err := apiClient.curl("GET", "/v1/zones", strings.NewReader(""))
+	zones, err := apiClient.getZones()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(zones)
+	ois := make([]interface{}, len(zones), len(zones))
+	for i, zone := range zones {
+		oi := make(map[string]interface{})
+		oi["name"] = zone.Name
+		oi["name_servers"] = zone.NameServers
 
-	if err := d.Set("zones", zones); err != nil {
+		ois[i] = oi
+	}
+
+	if err := d.Set("zones", ois); err != nil {
 		return diag.FromErr(err)
 	}
 

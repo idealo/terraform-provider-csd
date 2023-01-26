@@ -1,13 +1,9 @@
 package csd
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"strings"
 )
 
 func resourceZone() *schema.Resource {
@@ -50,17 +46,18 @@ func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface
 		zone.NameServers = append(zone.NameServers, ns.(string))
 	}
 
-	buffer := new(bytes.Buffer)
-	if err := json.NewEncoder(buffer).Encode(zone); err != nil {
-		return diag.FromErr(err)
-	}
-	if _, err := apiClient.curl("POST", "/v1/zones", buffer); err != nil {
+	result, err := apiClient.createZone(zone)
+	if err != nil {
 		return err
 	}
 
-	d.SetId(zone.Name)
-
-	resourceZoneRead(ctx, d, m)
+	d.SetId(result.Name)
+	if err := d.Set("name", result.Name); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("name_servers", result.NameServers); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return diags
 }
@@ -73,16 +70,16 @@ func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}
 
 	name := d.Id()
 
-	zone, err := apiClient.curl("GET", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""))
+	zone, err := apiClient.getZone(name)
 	if err != nil {
 		return err
 	}
 
 	// sets the response body (zone object) to Terraform zone data source
-	if err := d.Set("name", zone.(Zone).Name); err != nil {
+	if err := d.Set("name", zone.Name); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("name_servers", zone.(Zone).NameServers); err != nil {
+	if err := d.Set("name_servers", zone.NameServers); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -103,12 +100,16 @@ func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			zone.NameServers = append(zone.NameServers, ns.(string))
 		}
 
-		buffer := new(bytes.Buffer)
-		if err := json.NewEncoder(buffer).Encode(zone); err != nil {
+		result, err := apiClient.updateZone(zone)
+		if err != nil {
+			return err
+		}
+
+		if err := d.Set("name", result.Name); err != nil {
 			return diag.FromErr(err)
 		}
-		if _, err := apiClient.curl("PUT", fmt.Sprintf("/v1/zones/%s", name), buffer); err != nil {
-			return err
+		if err := d.Set("name_servers", result.NameServers); err != nil {
+			return diag.FromErr(err)
 		}
 	}
 
@@ -123,7 +124,7 @@ func resourceZoneDelete(ctx context.Context, d *schema.ResourceData, m interface
 
 	name := d.Id()
 
-	if _, err := apiClient.curl("DELETE", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader("")); err != nil {
+	if err := apiClient.deleteZone(name); err != nil {
 		return err
 	}
 

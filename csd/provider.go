@@ -7,11 +7,6 @@ import (
 	"strings"
 )
 
-type Zone struct {
-	Name        string   `json:"name"`
-	NameServers []string `json:"name_servers"`
-}
-
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		// Configure terraform provider with AWS credentials
