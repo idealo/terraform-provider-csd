@@ -39,21 +39,23 @@ func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
-	zones, err := apiClient.getZones()
+	results, err := apiClient.getZones()
 	if err != nil {
 		return err
 	}
 
-	ois := make([]interface{}, len(zones), len(zones))
-	for i, zone := range zones {
-		oi := make(map[string]interface{})
-		oi["name"] = zone.Name
-		oi["name_servers"] = zone.NameServers
+	// convert zone struct into interface mapping
+	// TODO: can we avoid this?
+	zones := make([]interface{}, len(results), len(results))
+	for i, result := range results {
+		zone := make(map[string]interface{})
+		zone["name"] = result.Name
+		zone["name_servers"] = result.NameServers
 
-		ois[i] = oi
+		zones[i] = zone
 	}
 
-	if err := d.Set("zones", ois); err != nil {
+	if err := d.Set("zones", zones); err != nil {
 		return diag.FromErr(err)
 	}
 

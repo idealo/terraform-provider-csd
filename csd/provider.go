@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"strings"
 )
 
 func Provider() *schema.Provider {
@@ -89,7 +88,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 
 	// Test the connection to find out if credentials are valid and endpoint is working
-	if _, err := apiClient.curl("GET", "/v1/zones", strings.NewReader("")); err != nil {
+	if _, err := apiClient.getZones(); err != nil {
 		diags = append(diags, err...)
 	}
 

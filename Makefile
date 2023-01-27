@@ -6,7 +6,7 @@ VERSION=1.0.0
 OS_ARCH=$(shell go version | awk '{gsub("/","_");print $$4}')
 AWS_PROFILE=sandbox
 
-.PHONY: clean build format install uninstall tf fake_api help
+.PHONY: clean build format install uninstall test facade help
 
 default: help
 
@@ -25,15 +25,15 @@ install: build  ## Install provider
 uninstall:  ## Remove provider
 	rm -fr ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}
 
-tf: install  ## Run example terraform
+test: install  ## Run example terraform
 	rm -fr examples/.terraform.lock.hcl examples/.terraform
 	cd examples; terraform init -upgrade
 	cd examples; terraform apply --auto-approve
 
-fake_api:  ## Build fake API
-	rm -fr csd/csd
-	cd csd; go build -o csd
-	./csd/csd
+facade:  ## Build fake API for testing
+	rm -fr facade/csd
+	cd facade; go build -o csd
+	./facade/csd
 
 help:  ## Display this help
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

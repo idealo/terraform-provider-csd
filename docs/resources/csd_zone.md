@@ -19,14 +19,7 @@ description: |-
 
 - `name` (String)
 - `name_servers` (List of String)
-- `owner` (String)
-
-### Optional
-
-- `last_updated` (String)
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-
