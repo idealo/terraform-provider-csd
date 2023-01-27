@@ -14,7 +14,7 @@ _tba_
 
 1. Clone git repository
    ```shell
-   git clone git@github.com:idealo/terraform-provider-idealo-tools.git
+   git clone git@github.com:idealo/terraform-provider-csd.git
    ```
 2. Build and install
    ```shell
