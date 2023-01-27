@@ -1,4 +1,4 @@
-# Terraform provider for [Common Domain Name product](https://github.com/idealo/transport_common_domain)
+# Terraform provider for [Common Domain Name product](https://github.com/idealo/transport_csd)
 
 Terraform provider for the common domain product. With this provider you can register DNS zones under the `idealo.tools` domain. For example `jira.idealo.tools` or `confluence.idealo.tools`.
 
