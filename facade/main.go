@@ -9,7 +9,6 @@ import (
 type Zone struct {
 	Name        string   `json:"name"`
 	NameServers []string `json:"name_servers"`
-	Owner       string   `json:"owner"`
 }
 
 // e.POST("/zones", saveZone)
@@ -41,12 +40,10 @@ func getZones(c echo.Context) error {
 		Zone{
 			Name:        "jira.idealo.tools",
 			NameServers: []string{"ns1.aws.example.com", "ns2.aws.example.net"},
-			Owner:       "123456789",
 		},
 		Zone{
 			Name:        "confluence.idealo.tools",
 			NameServers: []string{"ns23.aws.example.com", "ns42.aws.example.net"},
-			Owner:       "987654321",
 		},
 	})
 }
@@ -64,7 +61,6 @@ func updateZone(c echo.Context) error {
 		return c.JSON(http.StatusCreated, Zone{
 			Name:        name,
 			NameServers: update.NameServers,
-			Owner:       update.Owner,
 		})
 	}
 }

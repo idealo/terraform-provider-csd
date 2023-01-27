@@ -15,7 +15,8 @@ type Authorizer struct {
 	payloadHash          []byte
 }
 
-func signer(request *http.Request, accessKeyId string, secretAccessKey string, sessionToken string) *Authorizer {
+// signRequest prepares a request with proper AWS Signer v4 authentication
+func signRequest(request *http.Request, accessKeyId string, secretAccessKey string, sessionToken string) *Authorizer {
 	currentTime := time.Now().UTC()
 
 	const (

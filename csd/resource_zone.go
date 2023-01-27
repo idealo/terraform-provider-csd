@@ -1,14 +1,9 @@
 package csd
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"strings"
-	"time"
 )
 
 func resourceZone() *schema.Resource {
@@ -30,11 +25,6 @@ func resourceZone() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"last_updated": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -43,7 +33,7 @@ func resourceZone() *schema.Resource {
 }
 
 func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiClient := m.(ApiClient)
+	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
@@ -56,31 +46,32 @@ func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface
 		zone.NameServers = append(zone.NameServers, ns.(string))
 	}
 
-	buffer := new(bytes.Buffer)
-	if err := json.NewEncoder(buffer).Encode(zone); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := apiClient.curl("POST", "/v1/zones", buffer, nil); err != nil {
+	result, err := apiClient.createZone(zone)
+	if err != nil {
 		return err
 	}
 
-	d.SetId(zone.Name)
-
-	resourceZoneRead(ctx, d, m)
+	d.SetId(result.Name)
+	if err := d.Set("name", result.Name); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("name_servers", result.NameServers); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return diags
 }
 
 func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiClient := m.(ApiClient)
+	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
 	name := d.Id()
 
-	var zone Zone
-	if err := apiClient.curl("GET", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""), zone); err != nil {
+	zone, err := apiClient.getZone(name)
+	if err != nil {
 		return err
 	}
 
@@ -91,9 +82,6 @@ func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	if err := d.Set("name_servers", zone.NameServers); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("owner", zone.Owner); err != nil {
-		return diag.FromErr(err)
-	}
 
 	return diags
 }
@@ -101,7 +89,7 @@ func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}
 func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Check for resource changes (only name servers are relevant at the moment)
 	if d.HasChange("name_servers") {
-		apiClient := m.(ApiClient)
+		apiClient := m.(*ApiClient)
 
 		name := d.Id()
 		zone := Zone{
@@ -112,16 +100,15 @@ func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			zone.NameServers = append(zone.NameServers, ns.(string))
 		}
 
-		buffer := new(bytes.Buffer)
-		if err := json.NewEncoder(buffer).Encode(zone); err != nil {
-			return diag.FromErr(err)
-		}
-		if err := apiClient.curl("PUT", fmt.Sprintf("/v1/zones/%s", name), buffer, nil); err != nil {
+		result, err := apiClient.updateZone(zone)
+		if err != nil {
 			return err
 		}
 
-		// TODO: remove if unnecessary
-		if err := d.Set("last_updated", time.Now().Format(time.RFC850)); err != nil {
+		if err := d.Set("name", result.Name); err != nil {
+			return diag.FromErr(err)
+		}
+		if err := d.Set("name_servers", result.NameServers); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -130,14 +117,14 @@ func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceZoneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiClient := m.(ApiClient)
+	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
 	name := d.Id()
 
-	if err := apiClient.curl("DELETE", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""), nil); err != nil {
+	if err := apiClient.deleteZone(name); err != nil {
 		return err
 	}
 

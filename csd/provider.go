@@ -4,14 +4,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"strings"
 )
-
-type Zone struct {
-	Name        string   `json:"name"`
-	NameServers []string `json:"name_servers"`
-	Owner       string   `json:"owner"`
-}
 
 func Provider() *schema.Provider {
 	return &schema.Provider{
@@ -50,7 +43,7 @@ func Provider() *schema.Provider {
 // providerConfigure Stores the AWS credentials from the provider configuration so later HTTP requests can use them
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	/*
-		AWS credentials will be grabbed from environment variable or from the terraform provider configuration like this:
+		AWS credentials will be grabbed from environment variables or from the terraform provider configuration like this:
 		provider "csd" {
 		  aws_access_key_id     = "superSecret123!"
 		  aws_secret_access_key = "superSecret123!"
@@ -95,7 +88,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 
 	// Test the connection to find out if credentials are valid and endpoint is working
-	if err := apiClient.curl("GET", "/v1/zones", strings.NewReader(""), nil); err != nil {
+	if _, err := apiClient.getZones(); err != nil {
 		diags = append(diags, err...)
 	}
 

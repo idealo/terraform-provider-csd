@@ -23,6 +23,3 @@ description: |-
 
 - `id` (String) The ID of this resource.
 - `name_servers` (List of String)
-- `owner` (String)
-
-

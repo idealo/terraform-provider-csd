@@ -6,16 +6,29 @@ _Keep in mind that your FQDN shouldn't exceed 64 characters (including the final
 
 # Installation
 
-_tbd_
+## Install from Terraform Registry
+
+_tba_
+
+## Manual Installation
+
+1. Clone git repository
+   ```shell
+   git clone git@github.com:idealo/terraform-provider-idealo-tools.git
+   ```
+2. Build and install
+   ```shell
+   make install
+   ```
 
 # Usage
 
 ```terraform
 terraform {
-  required_version = ">= 1.3"
+  required_version = "~> 1.3"
   required_providers {
     idealo-tools = {
-      source  = "github.com/idealo/terraform-provider-idealo-tools"
+      source  = "idealo.com/transport/csd"
       version = "~>1.0"
     }
     aws = {
@@ -48,16 +61,16 @@ provider "idealo_tools" {}
 module "terraform_execution_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version = "~> 4.3"
- 
+
   create_role = true
   role_name = "<ENTER_ROLE_NAME>"
   max_session_duration = 6 * 60 * 60
- 
+
   provider_url = "token.actions.githubusercontent.com"
   oidc_subjects_with_wildcards = [
     "repo:idealo/<ENTER_REPO_NAME>:*",
   ]
- 
+
   role_policy_arns = [
     "arn:aws:iam::aws:policy/<ENTER_POLICY_NAME>",
   ]
@@ -66,7 +79,7 @@ module "terraform_execution_role" {
 
 # Create desired zone in Route53
 resource "aws_route53_zone" "shopverwaltung" {
-  name = "shopverwaltung.idealo.cloud"
+  name = "shopverwaltung.idealo.tools"
 }
 
 # Create zone forwarding in idealo-tools zone
@@ -78,4 +91,5 @@ resource "idealo_tools_zone" "shopverwaltung" {
 
 ---
 
-Made with 💖 by [🌐 Team Transport](https://github.com/orgs/idealo/teams/transport).
+Made with ❤️ and ✨ by [🌐 Team Transport](https://github.com/orgs/idealo/teams/transport).
+

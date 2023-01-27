@@ -5,7 +5,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -29,10 +28,6 @@ func dataSourceZones() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
-						"owner": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 					},
 				},
 			},
@@ -44,10 +39,20 @@ func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
-	var zones []Zone
-
-	if err := apiClient.curl("GET", "/v1/zones", strings.NewReader(""), zones); err != nil {
+	results, err := apiClient.getZones()
+	if err != nil {
 		return err
+	}
+
+	// convert zone struct into interface mapping
+	// TODO: can we avoid this?
+	zones := make([]interface{}, len(results), len(results))
+	for i, result := range results {
+		zone := make(map[string]interface{})
+		zone["name"] = result.Name
+		zone["name_servers"] = result.NameServers
+
+		zones[i] = zone
 	}
 
 	if err := d.Set("zones", zones); err != nil {

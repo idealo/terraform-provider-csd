@@ -13,12 +13,12 @@ import (
 func main() {
 	var debugMode bool
 
+	// TODO: figure out how to use this
 	flag.BoolVar(&debugMode, "debug", false, "Set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
 	plugin.Serve(&plugin.ServeOpts{
-		Debug: debugMode,
-		// TODO: update this string with the full name of your provider as used in your configs
+		Debug:        debugMode,
 		ProviderAddr: "idealo.com/transport/csd",
 		ProviderFunc: func() *schema.Provider {
 			return csd.Provider()

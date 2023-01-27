@@ -27,6 +27,3 @@ Read-Only:
 
 - `name` (String)
 - `name_servers` (List of String)
-- `owner` (String)
-
-
