@@ -54,7 +54,7 @@ provider "aws" {
 # Setup idealo-tools provider
 # It will use the AWS credentials provided by environment variables or parameters
 # The OIDC provider sets up the neccessary environment variables by default
-provider "idealo_tools" {}
+provider "csd" {}
 
 # Setup OIDC provider
 # https://confluence.eu.idealo.com/pages/viewpage.action?spaceKey=PTN&title=How+to+authenticate+from+GitHub+to+AWS
@@ -83,7 +83,7 @@ resource "aws_route53_zone" "shopverwaltung" {
 }
 
 # Create zone forwarding in idealo-tools zone
-resource "idealo_tools_zone" "shopverwaltung" {
+resource "csd_zone" "shopverwaltung" {
   name         = aws_route53_zone.shopverwaltung.name
   name_servers = aws_route53_zone.shopverwaltung.name_servers
 }
