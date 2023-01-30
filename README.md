@@ -91,6 +91,10 @@ resource "csd_zone" "shopverwaltung" {
 }
 ```
 
+# Development
+
+For development notes see [DEV.md](DEV.md).
+
 ---
 
 Made with ❤️ and ✨ by [🌐 Team Transport](https://github.com/orgs/idealo/teams/transport).
