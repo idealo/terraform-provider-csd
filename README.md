@@ -1,8 +1,14 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2023)
 
-# Terraform provider for [Common Domain Name product](https://github.com/idealo/transport_csd)
+# Terraform provider for [Common Short Domain product](https://github.com/idealo/transport_csd)
 
-Terraform provider for the common domain product. With this provider you can register DNS zones under the `idealo.tools` domain. For example `jira.idealo.tools` or `confluence.idealo.tools`.
+The Common Short Domain product gives you cool short domains (AWS Hosted Zones) in your AWS account so you can manage them yourself, without the hassle of a third party.
+
+Currently we support the following domains where you can get subdomains:
+
+- `idealo.tools`: Used for internal idealo tooling
+
+More domains will follow in future updates. If you're missing one that you need, contact Team Transport.
 
 _Keep in mind that your FQDN shouldn't exceed 64 characters (including the final dot) to retrieve a TLS certificate._
 
@@ -10,7 +16,7 @@ _Keep in mind that your FQDN shouldn't exceed 64 characters (including the final
 
 ## Install from Terraform Registry
 
-_tba_
+_TBA_
 
 ## Manual Installation
 
@@ -29,7 +35,7 @@ _tba_
 terraform {
   required_version = "~> 1.3"
   required_providers {
-    idealo-tools = {
+    csd = {
       source  = "idealo.com/transport/csd"
       version = "~>1.0"
     }
@@ -53,7 +59,7 @@ provider "aws" {
   allowed_account_ids = ["<ENTER_ACCOUNT_ID>"]
 }
 
-# Setup idealo-tools provider
+# Setup csd provider
 # It will use the AWS credentials provided by environment variables or parameters
 # The OIDC provider sets up the neccessary environment variables by default
 provider "csd" {}
@@ -84,7 +90,7 @@ resource "aws_route53_zone" "shopverwaltung" {
   name = "shopverwaltung.idealo.tools"
 }
 
-# Create zone forwarding in idealo-tools zone
+# Create zone forwarding in idealo.tools zone via CSD provider
 resource "csd_zone" "shopverwaltung" {
   name         = aws_route53_zone.shopverwaltung.name
   name_servers = aws_route53_zone.shopverwaltung.name_servers
