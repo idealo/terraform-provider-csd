@@ -29,14 +29,9 @@ builds:
     binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
   - format: zip
-    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
-    replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      freebsd: FreeBSD
-      386: x86
-      arm64: aarch64
+    #name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ if eq .Arch 'arm64' }}aarch64{{ else if eq .Arch '386' }}x86{{ else }}{{ .Arch }}{{ end }}"
+    rlcp: true
     files:
       - README.md
 checksum:
