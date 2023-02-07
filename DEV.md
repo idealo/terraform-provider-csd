@@ -17,5 +17,4 @@ Here are notes on how we develop this provider.
 - stablilize next branch
 - update `CHANGELOG.md`
 - merge next into main
-- tag as new version
-
+- tag as new version with [semantic versioning](https://semver.org/)
