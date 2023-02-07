@@ -19,6 +19,7 @@ type ApiClient struct {
 	AccessKeyId     string
 	SecretAccessKey string
 	SessionToken    string
+	UserAgent       string
 }
 
 type Zone struct {
@@ -45,6 +46,7 @@ func (c *ApiClient) createZone(zone Zone) (Zone, diag.Diagnostics) {
 	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
 	request.Header.Add("content-type", "application/json")
 	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
+	request.Header.Set("User-Agent", c.UserAgent)
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -104,6 +106,7 @@ func (c *ApiClient) getZone(name string) (Zone, diag.Diagnostics) {
 	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
 	request.Header.Add("content-type", "application/json")
 	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
+	request.Header.Set("User-Agent", c.UserAgent)
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -163,6 +166,7 @@ func (c *ApiClient) getZones() ([]Zone, diag.Diagnostics) {
 	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
 	request.Header.Add("content-type", "application/json")
 	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
+	request.Header.Set("User-Agent", c.UserAgent)
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -216,6 +220,7 @@ func (c *ApiClient) updateZone(zone Zone) (Zone, diag.Diagnostics) {
 	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
 	request.Header.Add("content-type", "application/json")
 	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
+	request.Header.Set("User-Agent", c.UserAgent)
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -274,6 +279,7 @@ func (c *ApiClient) deleteZone(name string) diag.Diagnostics {
 	request.Header.Add("Authorization", authorizationHeaders.authorizationHeaders)
 	request.Header.Add("content-type", "application/json")
 	request.Header.Add("x-amz-content-sha256", fmt.Sprintf("%x", authorizationHeaders.payloadHash))
+	request.Header.Set("User-Agent", c.UserAgent)
 
 	response, err := client.Do(request)
 	if err != nil {

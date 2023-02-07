@@ -4,7 +4,7 @@ NAME=csd
 BINARY=terraform-provider-${NAME}
 VERSION=1.0.0
 OS_ARCH=$(shell go version | awk '{gsub("/","_");print $$4}')
-AWS_PROFILE=sandbox
+#AWS_PROFILE=sandbox
 
 .PHONY: clean build format install uninstall test facade help
 
@@ -29,6 +29,9 @@ test: install  ## Run example terraform
 	rm -fr examples/.terraform.lock.hcl examples/.terraform
 	cd examples; terraform init -upgrade
 	cd examples; terraform apply --auto-approve
+
+debug:
+	dlv exec --accept-multiclient --continue --headless ./${BINARY} -- -debug
 
 facade:  ## Build fake API for testing
 	rm -fr facade/csd
