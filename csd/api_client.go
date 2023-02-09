@@ -12,7 +12,7 @@ import (
 )
 
 // HostURL Set to production endpoint of API
-const HostURL string = "https://api.common-short-domain.aws.idealo.cloud"
+const HostURL string = "https://csd.idealo.tools"
 
 // ApiClient that holds authentication details and convenience functions that wrap HTTP communication
 type ApiClient struct {
