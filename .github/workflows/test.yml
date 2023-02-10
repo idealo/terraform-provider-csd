@@ -55,7 +55,7 @@ jobs:
 
   # run acceptance tests in a matrix with Terraform core versions
   test:
-    name: Matrix test Terraform versions
+    name: Test Terraform versions
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
