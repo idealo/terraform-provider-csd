@@ -14,7 +14,7 @@ Here are notes on how we develop this provider.
 
 ## Releasing
 
-- stablilize next branch
+- stablilize `next` branch
 - update `CHANGELOG.md`
-- merge next into main
-- tag as new version with [semantic versioning](https://semver.org/)
+- merge `next` into `main`
+- tag as new version with [semantic versioning](https://semver.org/) :arrow_right: triggers Terraform registry update
