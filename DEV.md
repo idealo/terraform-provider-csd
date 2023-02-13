@@ -2,15 +2,17 @@
 
 Here are notes on how we develop this provider.
 
-## Branches
+## Branches and Tags
 
 - `main`
-  - holds only production code
+  - holds only production ready code
 - `next`
   - dev branch used to prepare the next release
   - dependabot updates merge in here
   - feature branches merge in here
   - don't forget to update `CHANGELOG.md` with changes
+- `v*` tags
+  - Will be released to Terraform registry
 
 ## Releasing
 
