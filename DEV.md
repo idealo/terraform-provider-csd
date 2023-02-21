@@ -5,18 +5,19 @@ Here are notes on how we develop this provider.
 ## Branches and Tags
 
 - `main`
-  - holds only production ready code
+  - Holds only production ready code
 - `next`
-  - dev branch used to prepare the next release
-  - dependabot updates merge in here
-  - feature branches merge in here
-  - don't forget to update `CHANGELOG.md` with changes
+  - Development branch used to prepare the next release
+  - Dependabot updates merge in here
+  - Feature branches merge in here
+  - Don't forget to update `CHANGELOG.md` with changes
 - `v*` tags
   - Will be released to Terraform registry
 
 ## Releasing
 
-- stablilize `next` branch
-- update `CHANGELOG.md`
-- merge `next` into `main`
-- tag as new version with [semantic versioning](https://semver.org/) :arrow_right: triggers Terraform registry update
+- Stablilize `next` branch
+- Update `CHANGELOG.md`
+- Generate documentation with `go generate`
+- Merge `next` into `main`
+- Tag as new version with [semantic versioning](https://semver.org/) :arrow_right: triggers Terraform registry update
