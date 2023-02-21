@@ -26,7 +26,7 @@ builds:
 archives:
   - format: zip
     #name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ if eq .Arch 'arm64' }}aarch64{{ else if eq .Arch '386' }}x86{{ else }}{{ .Arch }}{{ end }}"
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ if eq .Arch 'arm64' }}aarch64{{ else }}{{ .Arch }}{{ end }}"
     rlcp: true
     files:
       - README.md
