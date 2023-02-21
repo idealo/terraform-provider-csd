@@ -18,6 +18,6 @@ Here are notes on how we develop this provider.
 
 - Stablilize `next` branch
 - Update `CHANGELOG.md`
-- Generate documentation with `go generate`
+- Generate documentation with `go generate ./...`
 - Merge `next` into `main`
 - Tag as new version with [semantic versioning](https://semver.org/) :arrow_right: triggers Terraform registry update
