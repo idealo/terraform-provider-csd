@@ -85,7 +85,7 @@ gomod:
   # Since: v1.7.
   mod: mod
 universal_binaries:
-  - name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+  - name_template: '{{ .ProjectName }}_{{ .Version }}'
     replace: true
 announce:
   teams:
