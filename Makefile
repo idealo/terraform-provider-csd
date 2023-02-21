@@ -39,7 +39,7 @@ facade:  ## Build fake API for testing
 	./facade/csd
 
 docs:  ## Generate documentation
-	go generate
+	go generate ./...
 
 help:  ## Display this help
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
