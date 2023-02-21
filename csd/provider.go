@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	// Set descriptions to support markdown syntax, this will be used in document generation
+	// Set descriptions to support Markdown syntax, this will be used in document generation
 	// and the language server.
 	schema.DescriptionKind = schema.StringMarkdown
 
@@ -25,22 +25,25 @@ func init() {
 
 func New(version string, commit string) func() *schema.Provider {
 	return func() *schema.Provider {
-		p := &schema.Provider{
+		provider := &schema.Provider{
 			// Configure terraform provider with AWS credentials
 			Schema: map[string]*schema.Schema{
 				"aws_access_key_id": {
+					Description: "Defaults to `AWS_ACCESS_KEY_ID` environment variable",
 					Type:        schema.TypeString,
 					Required:    true,
 					Sensitive:   true,
 					DefaultFunc: schema.EnvDefaultFunc("AWS_ACCESS_KEY_ID", ""),
 				},
 				"aws_secret_access_key": {
+					Description: "Defaults to `AWS_SECRET_ACCESS_KEY` environment variable",
 					Type:        schema.TypeString,
 					Required:    true,
 					Sensitive:   true,
 					DefaultFunc: schema.EnvDefaultFunc("AWS_SECRET_ACCESS_KEY", ""),
 				},
 				"aws_session_token": {
+					Description: "Defaults to `AWS_SESSION_TOKEN` environment variable",
 					Type:        schema.TypeString,
 					Required:    true,
 					Sensitive:   true,
@@ -56,9 +59,9 @@ func New(version string, commit string) func() *schema.Provider {
 			},
 		}
 
-		p.ConfigureContextFunc = configure(version, commit, p)
+		provider.ConfigureContextFunc = configure(version, commit, provider)
 
-		return p
+		return provider
 	}
 }
 

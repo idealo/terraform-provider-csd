@@ -4,7 +4,7 @@
 
 The Common Short Domain product gives you cool short domains (AWS Hosted Zones) in your AWS account so you can manage them yourself, without the hassle of a third party.
 
-Currently we support the following domains where you can get subdomains:
+Currently, we support the following domains where you can get subdomains:
 
 - `idealo.tools`: Used for internal idealo tooling
 
@@ -16,18 +16,9 @@ _Keep in mind that your FQDN shouldn't exceed 64 characters (including the final
 
 ## Install from Terraform Registry
 
-_TBA_
+You can find our Terraform provider in the [Terraform registry](https://registry.terraform.io/providers/idealo/csd/latest).
 
-## Manual Installation
-
-1. Clone git repository
-   ```shell
-   git clone git@github.com:idealo/terraform-provider-csd.git
-   ```
-2. Build and install
-   ```shell
-   make install
-   ```
+Online documentation can also be found [here](https://registry.terraform.io/providers/idealo/csd/latest/docs).
 
 # Usage
 
@@ -36,7 +27,7 @@ terraform {
   required_version = "~> 1.3"
   required_providers {
     csd = {
-      source  = "idealo.com/transport/csd"
+      source  = "idealo/csd"
       version = "~>1.0"
     }
     aws = {

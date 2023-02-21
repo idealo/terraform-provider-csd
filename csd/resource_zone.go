@@ -14,13 +14,15 @@ func resourceZone() *schema.Resource {
 		DeleteContext: resourceZoneDelete,
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "FQDN of the DNS zone",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"name_servers": {
-				Type:     schema.TypeList,
-				Required: true,
-				MinItems: 2,
+				Description: "List of authoritative name servers for this zone",
+				Type:        schema.TypeList,
+				Required:    true,
+				MinItems:    2,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
