@@ -13,17 +13,20 @@ func dataSourceZones() *schema.Resource {
 		ReadContext: dataSourceZonesRead,
 		Schema: map[string]*schema.Schema{
 			"zones": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Description: "List of configured DNS zones",
+				Type:        schema.TypeList,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "FQDN of the DNS zone",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"name_servers": {
-							Type:     schema.TypeList,
-							Computed: true,
+							Description: "List of authoritative name servers for this zone",
+							Type:        schema.TypeList,
+							Computed:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},

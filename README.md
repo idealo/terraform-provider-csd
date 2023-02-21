@@ -4,7 +4,7 @@
 
 The Common Short Domain product gives you cool short domains (AWS Hosted Zones) in your AWS account so you can manage them yourself, without the hassle of a third party.
 
-Currently we support the following domains where you can get subdomains:
+Currently, we support the following domains where you can get subdomains:
 
 - `idealo.tools`: Used for internal idealo tooling
 
