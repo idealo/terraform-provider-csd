@@ -88,7 +88,7 @@ resource "csd_zone" "shopverwaltung" {
 }
 ```
 
-**⚠️ Important:** Keep in mind that the TTL of your NS records can be up to 2 days. So destroying them could lead to extended downtimes for your workloads. We suggest to protect them as shown in the example above or separate their automation completely from your product workloads.
+**⚠️ Important:** Keep in mind that the TTL of the NS records for your Hosted Zone can be up to 2 days. So destroying them could lead to extended downtimes for your workloads. We suggest to protect them as shown in the example above or separate their automation completely from your product workloads.
 
 # Development
 
