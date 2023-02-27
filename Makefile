@@ -2,7 +2,7 @@ HOSTNAME=idealo.com
 NAMESPACE=transport
 NAME=csd
 BINARY=terraform-provider-${NAME}
-VERSION=1.0.0
+VERSION=1.0.1
 OS_ARCH=$(shell go version | awk '{gsub("/","_");print $$4}')
 #AWS_PROFILE=sandbox
 
@@ -25,6 +25,10 @@ install: build  ## Install provider
 uninstall:  ## Remove provider
 	rm -fr ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}
 
+update:  ## Update dependencies
+	go get -t -u ./...
+	go mod tidy
+
 test: install  ## Run example terraform
 	rm -fr examples/.terraform.lock.hcl examples/.terraform
 	cd examples; terraform init -upgrade
@@ -32,11 +36,6 @@ test: install  ## Run example terraform
 
 debug:
 	dlv exec --accept-multiclient --continue --headless ./${BINARY} -- -debug
-
-facade:  ## Build fake API for testing
-	rm -fr facade/csd
-	cd facade; go build -o csd
-	./facade/csd
 
 docs:  ## Generate documentation
 	go generate ./...
