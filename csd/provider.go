@@ -3,6 +3,7 @@ package csd
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -28,26 +29,18 @@ func New(version string, commit string) func() *schema.Provider {
 		provider := &schema.Provider{
 			// Configure terraform provider with AWS credentials
 			Schema: map[string]*schema.Schema{
-				"aws_access_key_id": {
-					Description: "Defaults to `AWS_ACCESS_KEY_ID` environment variable",
-					Type:        schema.TypeString,
-					Required:    true,
-					Sensitive:   true,
-					DefaultFunc: schema.EnvDefaultFunc("AWS_ACCESS_KEY_ID", ""),
+				"profile": {
+					Type:     schema.TypeString,
+					Optional: true,
+					Description: "The profile for API operations. If not set, the default profile\n" +
+						"created with `aws configure` will be used.",
 				},
-				"aws_secret_access_key": {
-					Description: "Defaults to `AWS_SECRET_ACCESS_KEY` environment variable",
-					Type:        schema.TypeString,
-					Required:    true,
-					Sensitive:   true,
-					DefaultFunc: schema.EnvDefaultFunc("AWS_SECRET_ACCESS_KEY", ""),
-				},
-				"aws_session_token": {
-					Description: "Defaults to `AWS_SESSION_TOKEN` environment variable",
-					Type:        schema.TypeString,
-					Required:    true,
-					Sensitive:   true,
-					DefaultFunc: schema.EnvDefaultFunc("AWS_SESSION_TOKEN", ""),
+				"region": {
+					Type:     schema.TypeString,
+					Optional: true,
+					Default:  "eu-central-1",
+					Description: "The region where AWS operations will take place. Examples\n" +
+						"are us-east-1, us-west-2, etc.",
 				},
 			},
 			ResourcesMap: map[string]*schema.Resource{
@@ -71,43 +64,23 @@ func configure(version string, commit string, p *schema.Provider) func(context.C
 		// Setup a User-Agent for the API client
 		userAgent := p.UserAgent("terraform-provider-csd", fmt.Sprintf("%s (%s)", version, commit))
 
-		/*
-			AWS credentials will be grabbed from environment variables or from the terraform provider configuration like this:
-			provider "csd" {
-			  aws_access_key_id     = "superSecret123!"
-			  aws_secret_access_key = "superSecret123!"
-			  aws_session_token     = "superSecret123!"
-			}
-		*/
-		awsAccessKeyId := d.Get("aws_access_key_id").(string)
-		awsSecretAccessKey := d.Get("aws_secret_access_key").(string)
-		awsSessionToken := d.Get("aws_session_token").(string)
+		// AWS credentials will be grabbed from environment variables or from ~/.aws/credentials
 
 		// Warning or errors can be collected in a slice type
 		var diags diag.Diagnostics
 
-		// Check for the provided strings and create proper errors if they are missing
-		if awsAccessKeyId == "" {
+		creds, err := getCreds(d.Get("profile").(string), d.Get("region").(string))
+		if err != nil {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  "Unable to find authentication info for AWS",
-				Detail:   "Value for aws_access_key_id is missing",
+				Detail:   "Please configure your AWS credentials at ~/.aws/credentials or as enviromental variables.",
 			})
 		}
-		if awsSecretAccessKey == "" {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "Unable to find authentication info for AWS",
-				Detail:   "Value for aws_secret_access_key is missing",
-			})
-		}
-		if awsSessionToken == "" {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "Unable to find authentication info for AWS",
-				Detail:   "Value for aws_session_token is missing",
-			})
-		}
+
+		awsAccessKeyId := creds.AccessKeyID
+		awsSecretAccessKey := creds.SecretAccessKey
+		awsSessionToken := creds.SessionToken
 
 		// Create an API Client that holds the credentials and convenience function for HTTP communication
 		apiClient := ApiClient{
