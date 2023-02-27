@@ -12,17 +12,16 @@ terraform {
   }
 }
 
-#provider "aws" {
- # region              = "eu-central-1"
-  #allowed_account_ids = ["433744410943"]
-#}
-
-provider "csd" {
+provider "aws" {
+  region              = "eu-central-1"
+  allowed_account_ids = ["433744410943"]
 }
 
-#resource "aws_route53_zone" "myzone" {
-#  name = "myzone.idealo.tools"
-#}
+provider "csd" {}
+
+resource "aws_route53_zone" "myzone" {
+  name = "myzone.idealo.tools"
+}
 
 #resource "csd_zone" "myzone" {
 #  name = aws_route53_zone.myzone.name
@@ -37,11 +36,11 @@ provider "csd" {
 #  value = csd_zone.myzone.name_servers
 #}
 
-data "csd_zones" "all" {}
-
-output "test_data_read_zones" {
-  value = data.csd_zones.all
-}
+#data "csd_zones" "all" {}
+#
+#output "test_data_read_zones" {
+#  value = data.csd_zones.all
+#}
 #
 #data "csd_zone" "myzone" {
 #  name = "myzone.idealo.tools"
