@@ -37,8 +37,8 @@ resource "csd_zone" "myzone" {
 
 ## Import
 
-AWS hosted zone can be imported using the full domain name, e.g.
+Import is supported using the following syntax:
 
-```
-$ terraform import csd_zone.example myzone.idealo.tools 
+```shell
+terraform import csd_zone.example myzone.idealo.tools
 ```

@@ -76,7 +76,7 @@ module "terraform_execution_role" {
   number_of_role_policy_arns = 1
 }
 
-# Create a Route53 Hosted Zone. 
+# Create a Route53 Hosted Zone.
 # The lifecycle option prevents Terraform from accidentally removing critical resources.
 resource "aws_route53_zone" "shopverwaltung" {
   name = "shopverwaltung.idealo.tools"
@@ -101,4 +101,3 @@ For development notes see [DEV.md](DEV.md).
 ---
 
 Made with ❤️ and ✨ by [🌐 Team Transport](https://github.com/orgs/idealo/teams/transport).
-

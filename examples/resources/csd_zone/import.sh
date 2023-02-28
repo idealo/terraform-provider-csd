@@ -1,0 +1,1 @@
+terraform import csd_zone.example myzone.idealo.tools
