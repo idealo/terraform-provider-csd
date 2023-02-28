@@ -35,4 +35,10 @@ resource "csd_zone" "myzone" {
 
 - `id` (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import csd_zone.example myzone.idealo.tools
+```
