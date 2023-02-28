@@ -35,4 +35,10 @@ resource "csd_zone" "myzone" {
 
 - `id` (String) The ID of this resource.
 
+## Import
 
+AWS hosted zone can be imported using the full domain name, e.g.
+
+```
+$ terraform import csd_zone.example myzone.idealo.tools 
+```
