@@ -2,6 +2,7 @@
 facade/csd
 terraform-provider-csd
 examples/.terraform.lock.hcl
+.devcontainer
 
 # goreleader
 dist/
@@ -19,6 +20,7 @@ dist/
 *.dll
 *.so
 *.dylib
+
 
 # Test binary, built with `go test -c`
 *.test

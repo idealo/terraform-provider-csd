@@ -40,6 +40,7 @@ provider "csd" {}
 
 ### Optional
 
-- `aws_access_key_id` (String, Sensitive) Defaults to `AWS_ACCESS_KEY_ID` environment variable
-- `aws_secret_access_key` (String, Sensitive) Defaults to `AWS_SECRET_ACCESS_KEY` environment variable
-- `aws_session_token` (String, Sensitive) Defaults to `AWS_SESSION_TOKEN` environment variable
+- `profile` (String) The profile for API operations. If not set, the default profile
+created with `aws configure` will be used.
+- `region` (String) The region where AWS operations will take place. Examples
+are us-east-1, us-west-2, etc.
