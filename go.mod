@@ -3,7 +3,9 @@ module github.com/idealo/terraform-provider-csd
 go 1.20
 
 require (
-	github.com/hashicorp/terraform-plugin-docs v0.13.0
+	github.com/aws/aws-sdk-go-v2 v1.17.5
+	github.com/aws/aws-sdk-go-v2/config v1.18.15
+	github.com/hashicorp/terraform-plugin-docs v0.14.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.25.0
 )
 
@@ -14,8 +16,6 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.17.5 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.18.15 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.15 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.23 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.29 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/hashicorp/hc-install v0.5.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.16.1 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
-	github.com/hashicorp/terraform-exec v0.18.0 // indirect
+	github.com/hashicorp/terraform-exec v0.18.1 // indirect
 	github.com/hashicorp/terraform-json v0.15.0 // indirect
 	github.com/hashicorp/terraform-plugin-go v0.14.3 // indirect
 	github.com/hashicorp/terraform-plugin-log v0.8.0 // indirect
