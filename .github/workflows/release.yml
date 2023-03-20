@@ -18,7 +18,7 @@ jobs:
       - name: Unshallow
         run: git fetch --prune --unshallow
       - name: Setup Golang
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version-file: "go.mod"
           cache: true
