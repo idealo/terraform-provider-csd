@@ -6,7 +6,16 @@ The Common Short Domain product gives you cool short domains (AWS Hosted Zones) 
 
 Currently, we support the following domains where you can get subdomains:
 
-- `idealo.tools`: Used for internal idealo tooling
+- `idealo.tools`: internal idealo tooling for everyone
+- `idealo.com`: idealo components mostly for b2b
+- `idealo.de`: idealo components mostly for b2c
+- `idealo.co.uk`: idealo components mostly for british b2c
+- `idealo.es`: idealo components mostly for spanish b2c
+- `idealo.fr`: idealo components mostly for french b2c
+- `idealo.it`: idealo components mostly for italian b2c
+- `idealo.nl`: idealo components mostly for dutch b2c
+- `idealo.pl`: idealo components mostly for polish b2c
+- `idealo.pt`: idealo components mostly for portuguese b2c
 
 More domains will follow in future updates. If you're missing one that you need, contact Team Transport.
 
