@@ -29,5 +29,3 @@ data "csd_zone" "myzone" {
 
 - `id` (String) The ID of this resource.
 - `name_servers` (List of String) List of authoritative name servers for this zone
-
-
