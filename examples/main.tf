@@ -3,7 +3,7 @@ terraform {
   required_providers {
     csd = {
       version = "~> 1.0"
-      source  = "idealo.com/transport/csd"
+      source  = "idealo/csd"
     }
     aws = {
       source  = "hashicorp/aws"
