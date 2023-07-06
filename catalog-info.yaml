@@ -14,3 +14,5 @@ spec:
   owner: group:transport
   dependsOn:
     - component:default/csd
+  subcomponentOf:
+    - component:default/csd
