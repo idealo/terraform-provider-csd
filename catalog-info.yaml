@@ -14,3 +14,7 @@ spec:
   owner: group:transport
   dependsOn:
     - component:default/csd
+  subcomponentOf:
+    - component:default/csd
+  consumesApis:
+    - api:default/CSD_v1
