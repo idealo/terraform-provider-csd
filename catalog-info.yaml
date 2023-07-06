@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: CSD Terraform Provider
+  annotations:
+    github.com/project-slug: idealo/terraform-provider-csd
+spec:
+  type: other
+  lifecycle: unknown
+  owner: transport
