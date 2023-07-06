@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: csd_terraform_provider
+  title: CSD Terraform Provider
+  description: The Common Short Domain product gives you cool short domains (AWS Hosted Zones) in your AWS account so you can manage them yourself, without the hassle of a third party.
+  annotations:
+    github.com/project-slug: idealo/terraform-provider-csd
+    github.com/team-slug: idealo/transport
+    backstage.io/techdocs-ref: "dir:."
+spec:
+  type: library
+  lifecycle: production
+  owner: group:transport
+  dependsOn:
+    - component:default/csd
