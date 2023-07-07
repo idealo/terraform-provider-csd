@@ -12,9 +12,10 @@ spec:
   type: library
   lifecycle: production
   owner: group:transport
+  system: dns
   dependsOn:
     - component:default/csd
-  subcomponentOf:
+  partOf:
     - component:default/csd
   consumesApis:
     - api:default/CSD_v1
