@@ -1,1 +1,1 @@
-terraform import csd_zone.example myzone.idealo.tools
+terraform import csd_zone_delegation.example myzone.idealo.tools

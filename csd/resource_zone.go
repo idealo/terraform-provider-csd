@@ -6,12 +6,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceZone() *schema.Resource {
+func resourceZoneDelegation() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceZoneCreate,
-		ReadContext:   resourceZoneRead,
-		UpdateContext: resourceZoneUpdate,
-		DeleteContext: resourceZoneDelete,
+		CreateContext: resourceZoneDelegationCreate,
+		ReadContext:   resourceZoneDelegationRead,
+		UpdateContext: resourceZoneDelegationUpdate,
+		DeleteContext: resourceZoneDelegationDelete,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "FQDN of the DNS zone",
@@ -19,7 +19,7 @@ func resourceZone() *schema.Resource {
 				Required:    true,
 			},
 			"name_servers": {
-				Description: "List of authoritative name servers for this zone",
+				Description: "List of authoritative name servers for the zone",
 				Type:        schema.TypeList,
 				Required:    true,
 				MinItems:    2,
@@ -34,21 +34,21 @@ func resourceZone() *schema.Resource {
 	}
 }
 
-func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceZoneDelegationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	zone := Zone{
+	zoneDelegation := ZoneDelegation{
 		Name:        d.Get("name").(string),
 		NameServers: []string{},
 	}
 	for _, ns := range d.Get("name_servers").([]interface{}) {
-		zone.NameServers = append(zone.NameServers, ns.(string))
+		zoneDelegation.NameServers = append(zoneDelegation.NameServers, ns.(string))
 	}
 
-	result, err := apiClient.createZone(zone)
+	result, err := apiClient.createZoneDelegation(zoneDelegation)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func resourceZoneCreate(ctx context.Context, d *schema.ResourceData, m interface
 	return diags
 }
 
-func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceZoneDelegationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
@@ -72,37 +72,37 @@ func resourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}
 
 	name := d.Id()
 
-	zone, err := apiClient.getZone(name)
+	zoneDelegation, err := apiClient.getZoneDelegation(name)
 	if err != nil {
 		return err
 	}
 
-	// sets the response body (zone object) to Terraform zone data source
-	if err := d.Set("name", zone.Name); err != nil {
+	// sets the response body (zoneDelegation object) to Terraform zone_delegation data source
+	if err := d.Set("name", zoneDelegation.Name); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("name_servers", zone.NameServers); err != nil {
+	if err := d.Set("name_servers", zoneDelegation.NameServers); err != nil {
 		return diag.FromErr(err)
 	}
 
 	return diags
 }
 
-func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceZoneDelegationUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Check for resource changes (only name servers are relevant at the moment)
 	if d.HasChange("name_servers") {
 		apiClient := m.(*ApiClient)
 
 		name := d.Id()
-		zone := Zone{
+		zoneDelegation := ZoneDelegation{
 			Name:        name,
 			NameServers: []string{},
 		}
 		for _, ns := range d.Get("name_servers").([]interface{}) {
-			zone.NameServers = append(zone.NameServers, ns.(string))
+			zoneDelegation.NameServers = append(zoneDelegation.NameServers, ns.(string))
 		}
 
-		result, err := apiClient.updateZone(zone)
+		result, err := apiClient.updateZoneDelegation(zoneDelegation)
 		if err != nil {
 			return err
 		}
@@ -115,10 +115,10 @@ func resourceZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		}
 	}
 
-	return resourceZoneRead(ctx, d, m)
+	return resourceZoneDelegationRead(ctx, d, m)
 }
 
-func resourceZoneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceZoneDelegationDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiClient := m.(*ApiClient)
 
 	// Warning or errors can be collected in a slice type
@@ -126,7 +126,7 @@ func resourceZoneDelete(ctx context.Context, d *schema.ResourceData, m interface
 
 	name := d.Id()
 
-	if err := apiClient.deleteZone(name); err != nil {
+	if err := apiClient.deleteZoneDelegation(name); err != nil {
 		return err
 	}
 

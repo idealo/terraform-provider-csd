@@ -1,5 +1,5 @@
-data "csd_zones" "all" {}
+data "csd_zone_delegations" "all" {}
 
-output "all_zones" {
-  value = data.csd_zones.all
+output "all_zone_delegations" {
+  value = data.csd_zone_delegations.all
 }

@@ -25,7 +25,7 @@ _Keep in mind that your FQDN shouldn't exceed 64 characters (including the final
 
 > With great power comes great responsibility.
 
-Owning your own zone under a idealo.TLD comes with some responsibilities.
+Owning your own zone under an idealo.TLD comes with some responsibilities.
 
 ## Cookies
 
@@ -54,11 +54,11 @@ Online documentation can also be found [here](https://registry.terraform.io/prov
 
 ```terraform
 terraform {
-  required_version = "~> 1.3"
+  required_version = "~>1.3"
   required_providers {
     csd = {
       source  = "idealo/csd"
-      version = "~>1.0"
+      version = "~>2.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -89,7 +89,7 @@ provider "csd" {}
 # https://confluence.idealo.cloud/pages/viewpage.action?spaceKey=PTN&title=How+to+authenticate+from+GitHub+to+AWS
 module "terraform_execution_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "~> 4.3"
+  version = "~>4.3"
 
   create_role = true
   role_name = "<ENTER_ROLE_NAME>"
@@ -115,10 +115,26 @@ resource "aws_route53_zone" "shopverwaltung" {
   }
 }
 
-# Create zone forwarding in idealo.tools zone via CSD provider
-resource "csd_zone" "shopverwaltung" {
+# Create zone delegation in idealo.tools zone via CSD provider
+resource "csd_zone_delegation" "shopverwaltung" {
   name         = aws_route53_zone.shopverwaltung.name
   name_servers = aws_route53_zone.shopverwaltung.name_servers
+}
+```
+
+```terraform
+resource "csd_record" "wishlist.idealo.de_cname" {
+  name  = "wishlist.idealo.de"
+  type  = "cname"
+  value = "wishlist.edgekey.net"
+  ttl   = 3600
+}
+
+resource "csd_record" "_acme_challenge.wishlist.idealo.de_txt" {
+  name  = "_acme_challenge.wishlist.idealo.de"
+  type  = "txt"
+  value = "LeisahxaiQu8ayah2aiwe9Que5saiy4o"
+  ttl   = 60
 }
 ```
 

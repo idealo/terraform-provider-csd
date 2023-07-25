@@ -44,11 +44,11 @@ func New(version string, commit string) func() *schema.Provider {
 				},
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"csd_zone": resourceZone(),
+				"csd_zone_delegation": resourceZoneDelegation(),
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"csd_zones": dataSourceZones(),
-				"csd_zone":  dataSourceZone(),
+				"csd_zone_delegations": dataSourceZoneDelegations(),
+				"csd_zone_delegation":  dataSourceZoneDelegation(),
 			},
 		}
 
@@ -91,7 +91,7 @@ func configure(version string, commit string, p *schema.Provider) func(context.C
 		}
 
 		// Test the connection to find out if credentials are valid and endpoint is working
-		if _, err := apiClient.getZones(); err != nil {
+		if _, err := apiClient.getZoneDelegations(); err != nil {
 			diags = append(diags, err...)
 		}
 

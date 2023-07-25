@@ -19,3 +19,4 @@ spec:
     - component:default/csd
   consumesApis:
     - api:default/CSD_v1
+    - api:default/CSD_v2

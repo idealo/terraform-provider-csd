@@ -1,9 +1,9 @@
 terraform {
-  required_version = "~> 1.3"
+  required_version = "~>1.3"
   required_providers {
     csd = {
       source  = "idealo/csd"
-      version = "~>1.0"
+      version = "~>2.0"
     }
     aws = {
       source  = "hashicorp/aws"

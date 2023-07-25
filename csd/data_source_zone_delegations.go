@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-func dataSourceZones() *schema.Resource {
+func dataSourceZoneDelegations() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceZonesRead,
+		ReadContext: dataSourceZoneDelegationsRead,
 		Schema: map[string]*schema.Schema{
-			"zones": {
-				Description: "List of configured DNS zones",
+			"zone_delegations": {
+				Description: "List of configured DNS zone delegations",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
@@ -24,7 +24,7 @@ func dataSourceZones() *schema.Resource {
 							Computed:    true,
 						},
 						"name_servers": {
-							Description: "List of authoritative name servers for this zone",
+							Description: "List of authoritative name servers for the zone",
 							Type:        schema.TypeList,
 							Computed:    true,
 							Elem: &schema.Schema{
@@ -38,27 +38,27 @@ func dataSourceZones() *schema.Resource {
 	}
 }
 
-func dataSourceZonesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceZoneDelegationsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
-	results, err := apiClient.getZones()
+	results, err := apiClient.getZoneDelegations()
 	if err != nil {
 		return err
 	}
 
 	// convert zone struct into interface mapping
 	// TODO: can we avoid this?
-	zones := make([]interface{}, len(results), len(results))
+	zoneDelegations := make([]interface{}, len(results), len(results))
 	for i, result := range results {
-		zone := make(map[string]interface{})
-		zone["name"] = result.Name
-		zone["name_servers"] = result.NameServers
+		zoneDelegation := make(map[string]interface{})
+		zoneDelegation["name"] = result.Name
+		zoneDelegation["name_servers"] = result.NameServers
 
-		zones[i] = zone
+		zoneDelegations[i] = zoneDelegation
 	}
 
-	if err := d.Set("zones", zones); err != nil {
+	if err := d.Set("zoneDelegations", zoneDelegations); err != nil {
 		return diag.FromErr(err)
 	}
 

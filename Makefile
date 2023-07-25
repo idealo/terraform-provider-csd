@@ -2,7 +2,7 @@ HOSTNAME=idealo.com
 NAMESPACE=transport
 NAME=csd
 BINARY=terraform-provider-${NAME}
-VERSION=1.0.1
+VERSION=2.0.0
 OS_ARCH=$(shell go version | awk '{gsub("/","_");print $$4}')
 #AWS_PROFILE=sandbox
 
