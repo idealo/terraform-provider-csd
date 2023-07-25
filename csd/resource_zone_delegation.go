@@ -17,6 +17,7 @@ func resourceZoneDelegation() *schema.Resource {
 				Description: "FQDN of the DNS zone",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"name_servers": {
 				Description: "List of authoritative name servers for the zone",

@@ -45,10 +45,13 @@ func New(version string, commit string) func() *schema.Provider {
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"csd_zone_delegation": resourceZoneDelegation(),
+				"csd_record":          resourceRecord(),
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"csd_zone_delegations": dataSourceZoneDelegations(),
 				"csd_zone_delegation":  dataSourceZoneDelegation(),
+				"csd_records":          dataSourceRecords(),
+				"csd_record":           dataSourceRecord(),
 			},
 		}
 
