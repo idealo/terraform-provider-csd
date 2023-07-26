@@ -28,15 +28,14 @@ func resourceRecord() *schema.Resource {
 			"ttl": {
 				Description: "Time to life for the record in seconds",
 				Type:        schema.TypeInt,
-				Required:    false,
+				Optional:    true,
 				Default:     3600,
 			},
 			"rrtype": {
-				Description:  "The type of DNS record",
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ExactlyOneOf: []string{"cname", "CNAME", "txt", "TXT"}, // TODO: remove if it doesn't work
+				Description: "The type of DNS record",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 		},
 		Importer: &schema.ResourceImporter{

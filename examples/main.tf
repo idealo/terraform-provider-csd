@@ -2,8 +2,9 @@ terraform {
   required_version = "~>1.3"
   required_providers {
     csd = {
-      version = "~>2.0"
-      source  = "idealo/csd"
+      version = "2.0.0"
+      #source  = "idealo/csd"
+      source  = "idealo.com/transport/csd"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -23,18 +24,18 @@ resource "aws_route53_zone" "my_zone_delegation" {
   name = "myzone.idealo.tools"
 }
 
-#resource "csd_zone_delegation" "my_zone_delegation" {
-#  name = aws_route53_zone.my_zone_delegation.name
-#  name_servers = aws_route53_zone.my_zone_delegation.name_servers
-#}
-#
-#output "test_name" {
-#  value = csd_zone_delegation.my_zone_delegation.name
-#}
-#
-#output "test_name_servers" {
-#  value = csd_zone_delegation.my_zone_delegation.name_servers
-#}
+resource "csd_zone_delegation" "my_zone_delegation" {
+  name = aws_route53_zone.my_zone_delegation.name
+  name_servers = aws_route53_zone.my_zone_delegation.name_servers
+}
+
+output "test_name" {
+  value = csd_zone_delegation.my_zone_delegation.name
+}
+
+output "test_name_servers" {
+  value = csd_zone_delegation.my_zone_delegation.name_servers
+}
 
 #data "csd_zone_delegations" "all" {}
 #

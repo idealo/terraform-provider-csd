@@ -29,10 +29,9 @@ func dataSourceRecord() *schema.Resource {
 				Computed:    true,
 			},
 			"rrtype": {
-				Description:  "The type of DNS record",
-				Type:         schema.TypeString,
-				Required:     true,
-				ExactlyOneOf: []string{"cname", "CNAME", "txt", "TXT"}, // TODO: remove if it doesn't work
+				Description: "The type of DNS record",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 		},
 	}
