@@ -37,29 +37,16 @@ output "test_name_servers" {
   value = csd_zone_delegation.my_zone_delegation.name_servers
 }
 
-#data "csd_zone_delegations" "all" {}
-#
-#output "test_data_read_zone_delegations" {
-#  value = data.csd_zone_delegations.all
-#}
-#
-#data "csd_zone_delegation" "my_zone_delegation" {
-#  name = "myzone.idealo.tools"
-#}
-#
-#output "test_data_read_zone_delegation" {
-#  value = data.csd_zone_delegation.my_zone_delegation.name_servers
-#}
+data "csd_zone_delegations" "all" {}
 
-#resource "csd_zone_delegation" "confluence" {
-#  name = "confluence.idealo.tools"
-#  name_servers = [
-#    "ns1.aws.example.net",
-#    "ns2.aws.example.com"
-#  ]
-#  owner = "123456789"
-#}
-#
-#output "test_resource_create_zone_delegation" {
-#  value = csd_zone_delegation.confluence
-#}
+output "test_data_read_zone_delegations" {
+  value = data.csd_zone_delegations.all
+}
+
+data "csd_zone_delegation" "my_zone_delegation" {
+  name = "myzone.idealo.tools"
+}
+
+output "test_data_read_zone_delegation" {
+  value = data.csd_zone_delegation.my_zone_delegation.name_servers
+}
