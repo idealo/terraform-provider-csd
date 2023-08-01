@@ -2,7 +2,6 @@ package csd
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"strconv"
@@ -41,10 +40,8 @@ func dataSourceRecordRead(ctx context.Context, d *schema.ResourceData, m interfa
 	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
-	id := fmt.Sprintf("%s_%s", d.Get("name").(string), d.Get("rrtype").(string))
-
 	//record, err := apiClient.curl("GET", fmt.Sprintf("/v2/record/%s_%s", name, rrtype), strings.NewReader(""))
-	record, err := apiClient.getRecord(id)
+	record, err := apiClient.getRecord(d.Get("name").(string))
 	if err != nil {
 		return err
 	}

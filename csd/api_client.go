@@ -396,12 +396,12 @@ func (c *ApiClient) createRecord(record Record) (Record, diag.Diagnostics) {
 	return record, diags
 }
 
-func (c *ApiClient) getRecord(id string) (Record, diag.Diagnostics) {
+func (c *ApiClient) getRecord(name string) (Record, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	var record Record
 
 	client := &http.Client{Timeout: 10 * time.Second}
-	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/records/%s", HostURL, id), strings.NewReader(""))
+	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/records/%s", HostURL, name), strings.NewReader(""))
 	if err != nil {
 		return record, diag.FromErr(err)
 	}
@@ -437,7 +437,7 @@ func (c *ApiClient) getRecord(id string) (Record, diag.Diagnostics) {
 		}
 		return record, append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Couldn't find record with given id",
+			Summary:  "Couldn't find record with given name",
 			Detail:   responseBody["message"],
 		})
 	} else if response.StatusCode != 200 {
@@ -515,7 +515,7 @@ func (c *ApiClient) updateRecord(record Record) (Record, diag.Diagnostics) {
 	}
 
 	client := &http.Client{Timeout: 10 * time.Second}
-	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/v2/records/%s_%s", HostURL, record.Name, record.RRType), buffer)
+	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/v2/records/%s", HostURL, record.Name), buffer)
 	if err != nil {
 		return record, diag.FromErr(err)
 	}
@@ -570,11 +570,11 @@ func (c *ApiClient) updateRecord(record Record) (Record, diag.Diagnostics) {
 	return record, diags
 }
 
-func (c *ApiClient) deleteRecord(id string) diag.Diagnostics {
+func (c *ApiClient) deleteRecord(name string) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	client := &http.Client{Timeout: 10 * time.Second}
-	request, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/v2/records/%s", HostURL, id), strings.NewReader(""))
+	request, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/v2/records/%s", HostURL, name), strings.NewReader(""))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -610,7 +610,7 @@ func (c *ApiClient) deleteRecord(id string) diag.Diagnostics {
 		}
 		return append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Couldn't find record with given id",
+			Summary:  "Couldn't find record with given name",
 			Detail:   responseBody["message"],
 		})
 	} else if response.StatusCode != 204 {

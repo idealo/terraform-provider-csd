@@ -2,9 +2,9 @@ package csd
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"strings"
 )
 
 func resourceRecord() *schema.Resource {
@@ -51,8 +51,8 @@ func resourceRecordCreate(ctx context.Context, d *schema.ResourceData, m interfa
 	var diags diag.Diagnostics
 
 	record := Record{
-		Name:   d.Get("name").(string),
-		RRType: d.Get("rrtype").(string),
+		Name:   strings.ToLower(d.Get("name").(string)),
+		RRType: strings.ToUpper(d.Get("rrtype").(string)),
 		Value:  d.Get("value").(string),
 		TTL:    d.Get("ttl").(int),
 	}
@@ -62,7 +62,7 @@ func resourceRecordCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return err
 	}
 
-	d.SetId(fmt.Sprintf("%s_%s", result.Name, result.RRType))
+	d.SetId(strings.ToLower(result.Name))
 	if err := d.Set("name", result.Name); err != nil {
 		return diag.FromErr(err)
 	}
@@ -115,8 +115,8 @@ func resourceRecordUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 		apiClient := m.(*ApiClient)
 
 		record := Record{
-			Name:   d.Get("name").(string),
-			RRType: d.Get("rrtype").(string),
+			Name:   strings.ToLower(d.Get("name").(string)),
+			RRType: strings.ToUpper(d.Get("rrtype").(string)),
 			Value:  d.Get("value").(string),
 			TTL:    d.Get("ttl").(int),
 		}

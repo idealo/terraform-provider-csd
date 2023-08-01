@@ -58,7 +58,7 @@ func dataSourceZoneDelegationsRead(ctx context.Context, d *schema.ResourceData, 
 		zoneDelegations[i] = zoneDelegation
 	}
 
-	if err := d.Set("zoneDelegations", zoneDelegations); err != nil {
+	if err := d.Set("zone_delegations", zoneDelegations); err != nil {
 		return diag.FromErr(err)
 	}
 
