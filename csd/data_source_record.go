@@ -30,7 +30,7 @@ func dataSourceRecord() *schema.Resource {
 			"rrtype": {
 				Description: "The type of DNS record",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -51,6 +51,9 @@ func dataSourceRecordRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 	if err := d.Set("value", record.Value); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("rrtype", record.RRType); err != nil {
 		return diag.FromErr(err)
 	}
 
