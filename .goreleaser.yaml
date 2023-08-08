@@ -53,7 +53,7 @@ release:
   # If you want to manually examine the release before its live, uncomment this line:
   # draft: true
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "v{{ .Tag }}-next"
 changelog:
   skip: true
 gomod:
@@ -81,7 +81,7 @@ gomod:
 announce:
   teams:
     enabled: false
-    title_template: 'Terraform Provider csd {{ .Tag }} was just released!'
-    message_template: 'Awesome terraform provider {{.Tag}} is out!'
+    title_template: 'Terraform Provider csd v{{ .Tag }} was just released!'
+    message_template: 'Awesome terraform provider v{{.Tag}} is out!'
     color: '#2D313E'
     #icon_url: 'https://csd.aws.idealo.cloud/avatar.png'
