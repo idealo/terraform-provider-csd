@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-func dataSourceZone() *schema.Resource {
+func dataSourceZoneDelegation() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceZoneRead,
+		ReadContext: dataSourceZoneDelegationRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "FQDN of the DNS zone",
@@ -18,7 +18,7 @@ func dataSourceZone() *schema.Resource {
 				Required:    true,
 			},
 			"name_servers": {
-				Description: "List of authoritative name servers for this zone",
+				Description: "List of authoritative name servers for the zone",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Schema{
@@ -29,24 +29,24 @@ func dataSourceZone() *schema.Resource {
 	}
 }
 
-func dataSourceZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceZoneDelegationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiClient := m.(*ApiClient)
 	var diags diag.Diagnostics
 
 	name := d.Get("name").(string)
 
-	//zone, err := apiClient.curl("GET", fmt.Sprintf("/v1/zones/%s", name), strings.NewReader(""))
-	zone, err := apiClient.getZone(name)
+	//zoneDelegation, err := apiClient.curl("GET", fmt.Sprintf("/v2/zone_delegations/%s", name), strings.NewReader(""))
+	zoneDelegation, err := apiClient.getZoneDelegation(name)
 	if err != nil {
 		return err
 	}
 
-	nameServers := make([]interface{}, len(zone.NameServers), len(zone.NameServers))
-	for i, item := range zone.NameServers {
+	nameServers := make([]interface{}, len(zoneDelegation.NameServers), len(zoneDelegation.NameServers))
+	for i, item := range zoneDelegation.NameServers {
 		nameServers[i] = item
 	}
 
-	// sets the response body (zone object) to Terraform zone data source
+	// sets the response body (zone delegation object) to Terraform zone_delegation data source
 	if err := d.Set("name_servers", nameServers); err != nil {
 		return diag.FromErr(err)
 	}

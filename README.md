@@ -25,7 +25,7 @@ _Keep in mind that your FQDN shouldn't exceed 64 characters (including the final
 
 > With great power comes great responsibility.
 
-Owning your own zone under a idealo.TLD comes with some responsibilities.
+Owning your own zone under an idealo.TLD comes with some responsibilities.
 
 ## Cookies
 
@@ -50,15 +50,26 @@ You can find our Terraform provider in the [Terraform registry](https://registry
 
 Online documentation can also be found [here](https://registry.terraform.io/providers/idealo/csd/latest/docs).
 
+## Upgrade from v1.x to v2.x
+
+1. Comment all old "csd_zone" resources
+2. Run `terraform apply`, this will delete your old zone delegation
+3. Update provider version to `~>2.0`
+4. Uncomment and rename old `csd_zone` resources to `csd_zone_delegation`
+5. Run `terraform init --upgrade` to install the new version
+6. Run `terraform apply` to put the zone delegations back in place
+
+**❗Note: Your zone delegation will not work between steps 2 and 6. The DNS systems caches should cover this short downtime.**
+
 # Usage
 
 ```terraform
 terraform {
-  required_version = "~> 1.3"
+  required_version = "~>1.3"
   required_providers {
     csd = {
       source  = "idealo/csd"
-      version = "~>1.0"
+      version = "~>2.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -89,7 +100,7 @@ provider "csd" {}
 # https://confluence.idealo.cloud/pages/viewpage.action?spaceKey=PTN&title=How+to+authenticate+from+GitHub+to+AWS
 module "terraform_execution_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "~> 4.3"
+  version = "~>4.3"
 
   create_role = true
   role_name = "<ENTER_ROLE_NAME>"
@@ -105,7 +116,11 @@ module "terraform_execution_role" {
   ]
   number_of_role_policy_arns = 1
 }
+```
 
+## Use case 1: Hosted zone delegation
+
+```terraform
 # Create a Route53 Hosted Zone.
 # The lifecycle option prevents Terraform from accidentally removing critical resources.
 resource "aws_route53_zone" "shopverwaltung" {
@@ -115,8 +130,8 @@ resource "aws_route53_zone" "shopverwaltung" {
   }
 }
 
-# Create zone forwarding in idealo.tools zone via CSD provider
-resource "csd_zone" "shopverwaltung" {
+# Create zone delegation in idealo.tools zone via CSD provider
+resource "csd_zone_delegation" "shopverwaltung" {
   name         = aws_route53_zone.shopverwaltung.name
   name_servers = aws_route53_zone.shopverwaltung.name_servers
 }
@@ -124,9 +139,63 @@ resource "csd_zone" "shopverwaltung" {
 
 **⚠️ Important:** Keep in mind that the TTL of the NS records for your Hosted Zone can be up to 2 days. So destroying them could lead to extended downtimes for your workloads. We suggest to protect them as shown in the example above and/or separate their automation completely from your product workloads.
 
+## Use case 2: Route traffic through Akamai
+
+```terraform
+resource "csd_record" "wishlist_idealo_de_cname" {
+  name  = "wishlist.idealo.de"
+  type  = "cname"
+  value = "wishlist.edgekey.net"
+  ttl   = 3600
+}
+
+resource "csd_record" "_acme_challenge_wishlist_idealo_de_txt" {
+  name  = "_acme_challenge.wishlist.idealo.de"
+  type  = "txt"
+  value = "LeisahxaiQu8ayah2aiwe9Que5saiy4o"
+  ttl   = 60
+}
+```
+
+Follow the detailed documentation on how to setup the Akamai property [here](https://backstage.idealo.tools/catalog/default/component/CSD/docs/#use-case-forward-traffic-to-akamai). If you have any questions about the property, please ask the [SECURITY](https://teams.microsoft.com/l/channel/19%3a77eca9f9ee784e04988b4b8c29814e0b%40thread.tacv2/%25F0%259F%259B%25A1%25EF%25B8%258F%2520PT%2520Security?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team. They will gladly help you with that.
+
+
+# FAQ
+
+## Q: Provider does not support resource type
+
+If you see the following error message, you accidentally updated from version 1.x to version 2.x:
+
+```
+│ Error: Invalid resource type
+│
+│   on main.tf line 42, in resource "csd_zone" "my_zone_delegation":
+│   27: resource "csd_zone" "my_zone_delegation" {}
+│
+│ The provider idealo/csd does not support resource type "csd_zone".
+```
+
+To fix this issue downgrade to version 1.x like this:
+
+```terraform
+terraform {
+  required_providers {
+    csd = {
+      source  = "idealo/csd"
+      version = "~>1.0"
+    }
+  }
+}
+```
+
+Now follow the proper upgrade procedure described [here](#Upgrade from v1.x to v2.x).
+
 # Development
 
 For development notes see [DEV.md](DEV.md).
+
+
+
 
 ---
 

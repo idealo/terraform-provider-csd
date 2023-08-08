@@ -8,7 +8,6 @@ import (
 )
 
 func getCreds(p string, r string) (aws.Credentials, error) {
-
 	ctx := context.TODO()
 
 	cfg, err := config.LoadDefaultConfig(ctx,

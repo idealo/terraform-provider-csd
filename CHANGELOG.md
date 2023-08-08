@@ -1,5 +1,10 @@
 ## next (Unreleased)
 
+## 2.0.0 (Akamai traffic)
+
+- Rename `zone` resource to `zone_delegation`
+- Introduce new `record` resource for `CNAME` and `TXT` records
+
 ## 1.1.0 (AWS creds)
 
 - Add support for AWS profiles from AWS config files
