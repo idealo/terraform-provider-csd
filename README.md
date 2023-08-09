@@ -52,7 +52,7 @@ Online documentation can also be found [here](https://registry.terraform.io/prov
 
 ## Upgrade from v1.x to v2.x
 
-1. Comment all old "csd_zone" resources
+1. Comment all old `csd_zone` resources
 2. Run `terraform apply`, this will delete your old zone delegation
 3. Update provider version to `~>2.0`
 4. Uncomment and rename old `csd_zone` resources to `csd_zone_delegation`
