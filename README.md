@@ -144,14 +144,14 @@ resource "csd_zone_delegation" "shopverwaltung" {
 ```terraform
 resource "csd_record" "wishlist_idealo_de_cname" {
   name  = "wishlist.idealo.de"
-  type  = "cname"
+  rrtype  = "cname"
   value = "wishlist.edgekey.net"
   ttl   = 3600
 }
 
 resource "csd_record" "_acme_challenge_wishlist_idealo_de_txt" {
   name  = "_acme_challenge.wishlist.idealo.de"
-  type  = "txt"
+  rrtype  = "txt"
   value = "LeisahxaiQu8ayah2aiwe9Que5saiy4o"
   ttl   = 60
 }
