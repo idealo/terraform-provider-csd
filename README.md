@@ -188,7 +188,7 @@ terraform {
 }
 ```
 
-Now follow the proper upgrade procedure described [here](#Upgrade from v1.x to v2.x).
+Now follow the proper upgrade procedure described [here](https://github.com/idealo/terraform-provider-csd/tree/main#upgrade-from-v1x-to-v2x).
 
 # Development
 
