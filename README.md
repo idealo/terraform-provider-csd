@@ -157,7 +157,7 @@ resource "csd_record" "_acme_challenge_wishlist_idealo_de_txt" {
 }
 ```
 
-Follow the detailed documentation on how to setup the Akamai property [here](https://backstage.idealo.tools/catalog/default/component/CSD/docs/#use-case-forward-traffic-to-akamai). If you have any questions about the property, please ask the [SECURITY](https://teams.microsoft.com/l/channel/19%3a77eca9f9ee784e04988b4b8c29814e0b%40thread.tacv2/%25F0%259F%259B%25A1%25EF%25B8%258F%2520PT%2520Security?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team. They will gladly help you with that.
+Follow the detailed documentation on how to setup the Akamai property [here](https://backstage.idealo.tools/catalog/default/component/CSD/docs/#use-case-forward-traffic-to-akamai). If you have any security related questions about the property, please ask the [SECURITY](https://teams.microsoft.com/l/channel/19%3a77eca9f9ee784e04988b4b8c29814e0b%40thread.tacv2/%25F0%259F%259B%25A1%25EF%25B8%258F%2520PT%2520Security?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team. They will gladly help you with that. If you have questions regarding bot detection, the [User Insights](https://teams.microsoft.com/l/channel/19%3a4ae895491b724ee08b6cfd54d6ea1ca3%40thread.tacv2/User%2520Insights%2520-%2520General?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team might help too. For anything else you can ask the [Transport](https://teams.microsoft.com/l/channel/19%3a3038b820be2e4194905c35f5f98b8ceb%40thread.tacv2/%25E2%2598%2581%25EF%25B8%258F%2520PT%2520Web%2520Platform?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team.
 
 
 # FAQ
