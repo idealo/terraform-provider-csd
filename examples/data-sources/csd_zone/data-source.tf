@@ -1,3 +1,3 @@
 data "csd_zone_delegation" "my_zone_delegation" {
-  name = "myzone.idealo.tools"
+  name = "myzone.example.net"
 }
