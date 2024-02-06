@@ -13,7 +13,7 @@ updates:
       - "golang"
       - "dependencies"
     reviewers:
-      - "idealo/transport"
+      - "idealo/transit"
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "next"
@@ -25,4 +25,4 @@ updates:
       - "gh-action"
       - "dependencies"
     reviewers:
-      - "idealo/transport"
+      - "idealo/transit"
