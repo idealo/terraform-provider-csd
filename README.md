@@ -88,7 +88,6 @@ module "terraform_execution_role" {
 # Create a Route53 Hosted Zone.
 # sample-app is a placeholder for the subdomain for your application.
 # example.net is a placeholder for a domain which is supported in the CSD product.
-# The lifecycle option prevents Terraform from accidentally removing critical resources.
 resource "aws_route53_zone" "sample-app" {
   name = "sample-app.example.net"
 }
