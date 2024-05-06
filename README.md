@@ -91,9 +91,6 @@ module "terraform_execution_role" {
 # The lifecycle option prevents Terraform from accidentally removing critical resources.
 resource "aws_route53_zone" "sample-app" {
   name = "sample-app.example.net"
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 # Create zone delegation in example.net zone via CSD provider
