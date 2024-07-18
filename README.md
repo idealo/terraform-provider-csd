@@ -1,4 +1,4 @@
-![Maintained](https://img.shields.io/maintenance/yes/2023)
+![Maintained](https://img.shields.io/maintenance/yes/2024)
 
 # Terraform provider for [Common Short Domain product](https://github.com/idealo/transport_csd)
 
