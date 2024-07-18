@@ -8,9 +8,9 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "gh-action"
+      prefix: "go"
     labels:
-      - "golang"
+      - "go"
       - "dependencies"
     reviewers:
       - "idealo/transit"
