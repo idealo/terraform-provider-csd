@@ -75,6 +75,9 @@ jobs:
           - '1.4.*'
           - '1.5.*'
           - '1.6.*'
+          - '1.7.*'
+          - '1.8.*'
+          - '1.9.*'
     steps:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v4
@@ -85,7 +88,7 @@ jobs:
         go-version-file: "go.mod"
         cache: true
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3.0.0
+      uses: hashicorp/setup-terraform@v3.1.1
       with:
         terraform_version: ${{ matrix.terraform }}
         terraform_wrapper: false

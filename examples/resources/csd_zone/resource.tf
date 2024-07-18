@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "my_zone" {
-  name = "myzone.idealo.tools"
+  name = "myzone.example.net"
 }
 
 resource "csd_zone_delegation" "my_zone_delegation" {
