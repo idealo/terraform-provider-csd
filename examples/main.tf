@@ -15,13 +15,13 @@ terraform {
 
 provider "aws" {
   region              = "eu-central-1"
-  allowed_account_ids = ["433744410943"]
+  allowed_account_ids = ["123456789012"]
 }
 
 provider "csd" {}
 
 resource "aws_route53_zone" "myzone" {
-  name = "myzone2.idealo.tools"
+  name = "myzone2.example.net"
 }
 
 resource "csd_zone_delegation" "myzone" {
@@ -38,19 +38,19 @@ resource "aws_route53_record" "myrecord" {
 }
 
 resource "csd_record" "myrecord" {
-  name   = "_acme-challenge.myrecord.myzone2.idealo.tools"
+  name   = "_acme-challenge.myrecord.myzone2.example.net"
   rrtype = "TXT"
   value  = "foobar"
 }
 
 resource "csd_record" "myrecord2" {
-  name   = "myrecord2.myzone2.idealo.tools"
+  name   = "myrecord2.myzone2.example.net"
   rrtype = "CNAME"
   value  = "foobar.edgekey.net."
 }
 
 #data "csd_record" "myrecord" {
-#  name = "myrecord.idealo.tools"
+#  name = "myrecord.example.net"
 #}
 
 #output "myrecord" {
@@ -64,7 +64,7 @@ resource "csd_record" "myrecord2" {
 #}
 
 #resource "aws_route53_zone" "my_zone" {
-#  name = "myzone.idealo.tools"
+#  name = "myzone.example.net"
 #}
 
 #resource "csd_zone_delegation" "my_zone_delegation" {
@@ -87,7 +87,7 @@ resource "csd_record" "myrecord2" {
 #}
 
 #data "csd_zone_delegation" "my_zone_delegation" {
-#  name = "myzone.idealo.tools"
+#  name = "myzone.example.net"
 #}
 
 #output "test_data_read_zone_delegation" {

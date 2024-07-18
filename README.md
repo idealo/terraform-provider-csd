@@ -4,43 +4,7 @@
 
 The Common Short Domain product gives you cool short domains (AWS Hosted Zones) in your AWS account so you can manage them yourself, without the hassle of a third party.
 
-Currently, we support the following domains where you can get subdomains:
-
-- `idealo.tools`: internal idealo tooling for everyone
-- `idealo.com`: idealo components mostly for b2b
-- `idealo.de`: idealo components mostly for b2c
-- `idealo.co.uk`: idealo components mostly for british b2c
-- `idealo.es`: idealo components mostly for spanish b2c
-- `idealo.fr`: idealo components mostly for french b2c
-- `idealo.it`: idealo components mostly for italian b2c
-- `idealo.nl`: idealo components mostly for dutch b2c
-- `idealo.pl`: idealo components mostly for polish b2c
-- `idealo.pt`: idealo components mostly for portuguese b2c
-
-More domains will follow in future updates. If you're missing one that you need, contact Team Transport.
-
 _Keep in mind that your FQDN shouldn't exceed 64 characters (including the final dot) to retrieve a TLS certificate._
-
-# ⚠️ Disclaimer
-
-> With great power comes great responsibility.
-
-Owning your own zone under an idealo.TLD comes with some responsibilities.
-
-## Cookies
-
-Customers log into idealo.de and other idealo TLDs with a cookie that is valid for that domain and its subdomains which includes your hosted zone. This could lead to some unwanted site effects you must be aware of. For example, if you create a CNAME pointing to an external FQDN, the cookie will be readable by that third party. So this external service provider could read that cookie and in the worst case impersonate our customer. From a security perspective, this might be unwanted behaviour. So if you point DNS records to third parties, take care that cookies are not forwarded to them. If you're unsure please contact us or the Security team to clarify how to deal with your specific scenario.
-
-As an example, let's say you serve the wishlist component from you AWS account. For that, you registered the subdomain wishlist.idealo.de with our CSD product. That means that we delegate the zone wishlist.idealo.de to your account. In your account, you then create DNS resource records pointing to the wishlist component, for example an ALB inside your account.
-Imagine you use a third party service like Salesforce that requires you to point DNS entries under your hosted zone to their service. For example, a CNAME salesforce.wishlist.idealo.de pointing to service.salesforce.com. This would mean that Salesforce is now able to read the customer's cookie and therefore is able to impersonate that customer. In that case, contact security to make sure that you comply with our security requirements.
-
-## Mail servers
-
-By controlling your own zone, you're also able to set records for your own mail servers. These mail servers would be able to send mails with a sender under subdomain for example wishlist.idealo.de. These mails should be well crafted and aligned with company standards from the design, legal and security departments.
-
-If you plan to set up email communication under your subdomain, you must talk to the mentioned departments first to make you follow the idealo guidelines.
-
-If you have any other questions about your hosted zone setup, feel free to reach out to Team Transport.
 
 # Installation
 
@@ -52,7 +16,7 @@ Online documentation can also be found [here](https://registry.terraform.io/prov
 
 ## Upgrade from v1.x to v2.x
 
-1. Comment all old "csd_zone" resources
+1. Comment all old `csd_zone` resources
 2. Run `terraform apply`, this will delete your old zone delegation
 3. Update provider version to `~>2.0`
 4. Uncomment and rename old `csd_zone` resources to `csd_zone_delegation`
@@ -122,18 +86,21 @@ module "terraform_execution_role" {
 
 ```terraform
 # Create a Route53 Hosted Zone.
+# sample-app is a placeholder for the subdomain for your application.
+# example.net is a placeholder for a domain which is supported in the CSD product.
 # The lifecycle option prevents Terraform from accidentally removing critical resources.
-resource "aws_route53_zone" "shopverwaltung" {
-  name = "shopverwaltung.idealo.tools"
+resource "aws_route53_zone" "sample-app" {
+  name = "sample-app.example.net"
   lifecycle {
     prevent_destroy = true
   }
 }
 
-# Create zone delegation in idealo.tools zone via CSD provider
-resource "csd_zone_delegation" "shopverwaltung" {
-  name         = aws_route53_zone.shopverwaltung.name
-  name_servers = aws_route53_zone.shopverwaltung.name_servers
+# Create zone delegation in example.net zone via CSD provider
+# example.net is a placeholder for a domain which is supported in the CSD product.
+resource "csd_zone_delegation" "sample-app" {
+  name         = aws_route53_zone.sample-app.name
+  name_servers = aws_route53_zone.sample-app.name_servers
 }
 ```
 
@@ -142,22 +109,22 @@ resource "csd_zone_delegation" "shopverwaltung" {
 ## Use case 2: Route traffic through Akamai
 
 ```terraform
-resource "csd_record" "wishlist_idealo_de_cname" {
-  name  = "wishlist.idealo.de"
-  type  = "cname"
-  value = "wishlist.edgekey.net"
+resource "csd_record" "sample-app_example_net_cname" {
+  name  = "sample-app.example.net"
+  rrtype  = "cname"
+  value = "sample-app.edgekey.net"
   ttl   = 3600
 }
 
-resource "csd_record" "_acme_challenge_wishlist_idealo_de_txt" {
-  name  = "_acme_challenge.wishlist.idealo.de"
-  type  = "txt"
+resource "csd_record" "_acme_challenge_sample-app_example_net_txt" {
+  name  = "_acme_challenge.sample-app.example.net"
+  rrtype  = "txt"
   value = "LeisahxaiQu8ayah2aiwe9Que5saiy4o"
   ttl   = 60
 }
 ```
 
-Follow the detailed documentation on how to setup the Akamai property [here](https://backstage.idealo.tools/catalog/default/component/CSD/docs/#use-case-forward-traffic-to-akamai). If you have any questions about the property, please ask the [SECURITY](https://teams.microsoft.com/l/channel/19%3a77eca9f9ee784e04988b4b8c29814e0b%40thread.tacv2/%25F0%259F%259B%25A1%25EF%25B8%258F%2520PT%2520Security?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team. They will gladly help you with that.
+Follow the detailed documentation on how to setup the Akamai property [here](https://backstage.idealo.tools/catalog/default/component/CSD/docs/#use-case-forward-traffic-to-akamai). If you have any security related questions about the property, please ask the [SECURITY](https://teams.microsoft.com/l/channel/19%3a77eca9f9ee784e04988b4b8c29814e0b%40thread.tacv2/%25F0%259F%259B%25A1%25EF%25B8%258F%2520PT%2520Security?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team. They will gladly help you with that. If you have questions regarding bot detection, the [User Insights](https://teams.microsoft.com/l/channel/19%3a4ae895491b724ee08b6cfd54d6ea1ca3%40thread.tacv2/User%2520Insights%2520-%2520General?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team might help too. For anything else you can ask the [Transport](https://teams.microsoft.com/l/channel/19%3a3038b820be2e4194905c35f5f98b8ceb%40thread.tacv2/%25E2%2598%2581%25EF%25B8%258F%2520PT%2520Web%2520Platform?groupId=424df2ed-7bad-42b5-9c93-2a74f5acd0e1&tenantId=21956b19-fed2-44b7-90cf-b6d281c0a42a) team.
 
 
 # FAQ
@@ -188,7 +155,7 @@ terraform {
 }
 ```
 
-Now follow the proper upgrade procedure described [here](#Upgrade from v1.x to v2.x).
+Now follow the proper upgrade procedure described [here](https://github.com/idealo/terraform-provider-csd/tree/main#upgrade-from-v1x-to-v2x).
 
 # Development
 
