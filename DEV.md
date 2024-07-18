@@ -11,7 +11,7 @@ Here are notes on how we develop this provider.
   - Dependabot updates merge in here
   - Feature branches merge in here
   - Don't forget to update `CHANGELOG.md` with changes
-- `v*` tags
+- `X.Y.Z` tags
   - Will be released to Terraform registry
 
 ## Releasing
