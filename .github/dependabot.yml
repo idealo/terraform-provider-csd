@@ -4,7 +4,7 @@ version: 2
 updates:
   - package-ecosystem: "gomod"
     directory: "/"
-    target-branch: "next"
+    target-branch: "main"
     schedule:
       interval: "weekly"
     commit-message:
@@ -16,7 +16,7 @@ updates:
       - "idealo/transit"
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "next"
+    target-branch: "main"
     schedule:
       interval: "weekly"
     commit-message:
