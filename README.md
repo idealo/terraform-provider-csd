@@ -1,4 +1,4 @@
-![Maintained](https://img.shields.io/maintenance/yes/2024)
+![Maintained](https://img.shields.io/maintenance/yes/2025) [![Release](https://github.com/idealo/terraform-provider-csd/actions/workflows/release.yml/badge.svg)](https://github.com/idealo/terraform-provider-csd/actions/workflows/release.yml) [![Test](https://github.com/idealo/terraform-provider-csd/actions/workflows/test.yml/badge.svg)](https://github.com/idealo/terraform-provider-csd/actions/workflows/test.yml)
 
 # Terraform provider for [Common Short Domain product](https://github.com/idealo/transport_csd)
 
