@@ -34,6 +34,8 @@ jobs:
           cache: true
       - name: Get dependencies
         run: go mod download
+      - name: Tidy Go modules
+        run: go mod tidy
       - name: Build
         run: go build -v .
 
