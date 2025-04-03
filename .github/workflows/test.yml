@@ -34,8 +34,6 @@ jobs:
           cache: true
       - name: Get dependencies
         run: go mod download
-      - name: Tidy Go modules
-        run: go mod tidy
       - name: Build
         run: go build -v .
 
@@ -53,6 +51,8 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
+      - name: Tidy Go modules
+        run: go mod tidy          
       - run: go generate ./...
       - name: git diff
         run: |
