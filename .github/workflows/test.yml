@@ -50,23 +50,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
-          cache: true
-      - name: Tidy Go modules
-        run: go mod tidy          
+          cache: true     
       - run: go generate ./...
-      - name: Check for changes
-        shell: bash  
-        run: |
-         if [ -n "$(git status --porcelain)" ]; then
-         echo "Code generation produced changes. Committing changes."
-         git config --global user.email "you@example.com"
-         git config --global user.name "Your Name"
-         git add .
-         git commit -m "Commit generated code"
-         git push
-         else
-         echo "No changes detected."
-         fi    
       - name: git diff
         run: |
           git diff --compact-summary --exit-code || \
