@@ -12,8 +12,6 @@ updates:
     labels:
       - "go"
       - "dependencies"
-    reviewers:
-      - "idealo/transit"
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "main"
@@ -24,5 +22,3 @@ updates:
     labels:
       - "gh-action"
       - "dependencies"
-    reviewers:
-      - "idealo/transit"
