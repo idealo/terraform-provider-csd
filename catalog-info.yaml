@@ -6,12 +6,12 @@ metadata:
   description: The Common Short Domain product gives you cool short domains (AWS Hosted Zones) in your AWS account so you can manage them yourself, without the hassle of a third party.
   annotations:
     github.com/project-slug: idealo/terraform-provider-csd
-    github.com/team-slug: idealo/transport
+    github.com/team-slug: idealo/cloud-core
     backstage.io/techdocs-ref: "dir:."
 spec:
   type: library
   lifecycle: production
-  owner: group:transit
+  owner: group:cloud-core
   system: dns
   dependsOn:
     - component:default/csd
