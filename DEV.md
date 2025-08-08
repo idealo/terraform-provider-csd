@@ -21,3 +21,10 @@ Here are notes on how we develop this provider.
 - Generate documentation with `go generate ./...`
 - Merge `next` into `main`
 - Tag as new version with [semantic versioning](https://semver.org/) :arrow_right: triggers Terraform registry update
+
+## Update golang dependencies
+
+```bash
+go get -u
+go mod tidy
+```
