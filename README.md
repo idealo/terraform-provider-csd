@@ -63,22 +63,22 @@ provider "csd" {}
 # Setup OIDC provider
 # https://confluence.idealo.cloud/pages/viewpage.action?spaceKey=PTN&title=How+to+authenticate+from+GitHub+to+AWS
 module "terraform_execution_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "~>4.3"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version = "~> 6.0"
 
-  create_role = true
-  role_name = "<ENTER_ROLE_NAME>"
+  name            = "<ENTER_ROLE_NAME>"
+  use_name_prefix = false
   max_session_duration = 6 * 60 * 60
 
-  provider_url = "token.actions.githubusercontent.com"
-  oidc_subjects_with_wildcards = [
+  enable_github_oidc = true
+  oidc_audiences     = ["sts.amazonaws.com"]
+  oidc_wildcard_subjects = [
     "repo:idealo/<ENTER_REPO_NAME>:*",
   ]
 
-  role_policy_arns = [
-    "arn:aws:iam::aws:policy/<ENTER_POLICY_NAME>",
-  ]
-  number_of_role_policy_arns = 1
+  policies = {
+    <ENTER_POLICY_NAME> = "arn:aws:iam::aws:policy/<ENTER_POLICY_NAME>"
+  }
 }
 ```
 
