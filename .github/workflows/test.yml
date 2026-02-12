@@ -111,7 +111,7 @@ jobs:
 
   auto-merge:
     needs: [test, build, generate]
-    if: ${{ needs.test.result == 'success' && needs.build.result == 'success' && needs.generate.result == 'success' && github.event.pull_request.user.login == 'dependabot[bot]' }}
+    if: ${{ github.event_name == 'pull_request' && needs.test.result == 'success' && needs.build.result == 'success' && needs.generate.result == 'success' && github.event.pull_request.user.login == 'dependabot[bot]' }}
     uses: idealo/cloud-core-github-workflows/.github/workflows/auto-merge.yml@main
     secrets: inherit
     with:
