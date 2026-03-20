@@ -25,12 +25,27 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: Generate GitHub App Token
+        id: token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.GH_CC_PUBLISH_GH_APP_ID }}
+          private-key: ${{ secrets.GH_CC_PUBLISH_GH_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Approve PR
+        run: |
+          PR_URL="https://github.com/${{ github.repository }}/pull/${{ inputs.pr-number }}"
+          gh pr review --approve "$PR_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Merge PR for minor/patch updates
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
           steps.metadata.outputs.update-type == 'version-update:semver-patch'
         run: |
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ inputs.pr-number }}"
-          gh pr merge --auto --squash "$PR_URL"
+          gh pr merge --squash --delete-branch --auto "$PR_URL"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.token.outputs.token }}
