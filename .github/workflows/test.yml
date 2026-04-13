@@ -108,10 +108,3 @@ jobs:
           # following syntax:
           # SOME_VAR: ${{ secrets.SOME_VAR }}
         run: go test -v -cover ./csd
-
-  auto-merge:
-    needs: [test, build, generate]
-    if: ${{ github.event_name == 'pull_request' && needs.test.result == 'success' && needs.build.result == 'success' && needs.generate.result == 'success' && github.event.pull_request.user.login == 'dependabot[bot]' }}
-    uses: ./.github/workflows/auto-merge.yml
-    with:
-      pr-number: ${{ github.event.pull_request.number }}
