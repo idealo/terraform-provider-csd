@@ -11,5 +11,8 @@
   ],
   "schedule": [
     "* 8-16 1-7 * 1"
+  ],
+  "postUpdateOptions": [
+    "gomodTidy"
   ]
 }
