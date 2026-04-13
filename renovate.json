@@ -1,6 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "local>idealo/ext-renovate-config"
+    "config:base",
+    "group:allNonMajor",
+    ":automergeMinor",
+    ":dependencyDashboard",
+    ":label(dependencies)",
+    ":renovatePrefix",
+    ":rebaseStalePrs"
+  ],
+  "schedule": [
+    "* 8-16 1-7 * 1"
   ]
 }
